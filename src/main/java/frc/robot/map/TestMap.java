@@ -1,5 +1,6 @@
 package frc.robot.map;
 
+import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.util.Units;
 import frc.robot.subsystems.Drivetrain;
 
@@ -13,6 +14,8 @@ public class TestMap extends Map {
 
             wheelCircumference = Units.inchesToMeters(6);
             trackWidth = Units.inchesToMeters(16);
+
+            feedforward = new SimpleMotorFeedforward(0, 0, 0);
         }};
     }
 }

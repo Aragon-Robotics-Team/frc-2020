@@ -6,11 +6,13 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.ControlType;
 
 import edu.wpi.first.wpilibj.Notifier;
+import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.util.NavX;
 import frc.robot.util.SparkMaxFactory;
@@ -28,6 +30,8 @@ public class Drivetrain extends SubsystemBase {
         public double gearRatio;
         public double wheelCircumference; // meters
         public double trackWidth; // meters
+
+        public SimpleMotorFeedforward feedforward;
     }
 
     private class Motors {
@@ -70,7 +74,7 @@ public class Drivetrain extends SubsystemBase {
         DifferentialDriveKinematics kinematics;
         Notifier notifier = new Notifier(this::update);
 
-        public Odometry(final Motors _motors) {
+        private Odometry(final Motors _motors) {
             motors = _motors;
             final var config = motors.config;
 
@@ -119,11 +123,26 @@ public class Drivetrain extends SubsystemBase {
         }
     }
 
+    public class Controller {
+        final Motors motors;
+
+        SimpleMotorFeedforward feedforward;
+
+        private Controller(Motors _motors) {
+            motors = _motors;
+            final var config = motors.config;
+
+            feedforward = config.feedforward;
+        }
+    }
+
     Motors motors;
     Odometry odometry;
 
     public Drivetrain(final Config config) {
         motors = new Motors(config);
+
+        RamseteCommand
         odometry = new Odometry(motors);
     }
 
