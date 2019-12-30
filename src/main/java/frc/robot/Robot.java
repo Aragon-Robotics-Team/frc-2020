@@ -8,6 +8,8 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import frc.robot.map.Map;
+import frc.robot.subsystems.Drivetrain;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -17,6 +19,8 @@ import edu.wpi.first.wpilibj.TimedRobot;
  * project.
  */
 public class Robot extends TimedRobot {
+  Drivetrain d = new Drivetrain(Map.getMap().getDrivetrainConfig());
+
   /**
    * This function is run when the robot is first started up and should be used
    * for any initialization code.

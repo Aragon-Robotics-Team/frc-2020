@@ -12,7 +12,8 @@ public class SparkMaxFactory {
     public static final double voltageCompensation = 11;
 
     public static CANSparkMax create(int port) {
-        var spark = new CANSparkMax(port, MotorType.kBrushless);
+        // var spark = new CANSparkMax(port, MotorType.kBrushless);
+        var spark = Mock.mock(CANSparkMax.class);
 
         spark.clearFaults();
         spark.enableVoltageCompensation(voltageCompensation);

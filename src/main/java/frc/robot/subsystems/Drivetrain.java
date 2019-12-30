@@ -12,7 +12,6 @@ import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
-import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.util.NavX;
 import frc.robot.util.SparkMaxFactory;
@@ -142,7 +141,6 @@ public class Drivetrain extends SubsystemBase {
     public Drivetrain(final Config config) {
         motors = new Motors(config);
 
-        RamseteCommand
         odometry = new Odometry(motors);
     }
 
