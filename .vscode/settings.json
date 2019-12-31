@@ -1,14 +1,34 @@
 {
-  "java.configuration.updateBuildConfiguration": "automatic",
-  "files.exclude": {
-    "**/.git": true,
-    "**/.svn": true,
-    "**/.hg": true,
-    "**/CVS": true,
-    "**/.DS_Store": true,
-    "bin/": true,
-    ".classpath": true,
-    ".project": true
-},
-"C_Cpp.default.configurationProvider": "vscode-wpilib"
+    "java.configuration.updateBuildConfiguration": "automatic",
+    "files.exclude": {
+        "**/.git": true,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/CVS": true,
+        "**/.DS_Store": true,
+        "**/{,.}gradle*": true, // Everything gradle except .gradle files
+        "**/bin/": true, // bin folder
+        "**/build/": true, // build folder
+        "vendordeps/": true,
+        ".gitignore": false,
+        "**/.project": true,
+        "**/.gitattributes": true,
+        "**/.classpath": true,
+        "**/.settings": true,
+        "**/.wpilib": true,
+        "**/lib": true // vision/lib jars
+    },
+    // Use `gradlew build` or `gradlew spotlessApply` instead
+    // config xml @ ./gradle/eclipse-style.xml
+    // "java.format.settings.url": "https://raw.githubusercontent.com/google/styleguide/gh-pages/eclipse-java-google-style.xml",
+    "editor.formatOnSave": false,
+    "editor.defaultFormatter": null,
+    "wpilib.autoStartRioLog": false,
+    "wpilib.autoSaveOnDeploy": true,
+    "wpilib.skipTests": true,
+    "editor.detectIndentation": false,
+    "editor.tabSize": 4,
+    "editor.insertSpaces": true,
+    "files.insertFinalNewline": true,
+    "files.trimFinalNewlines": true
 }

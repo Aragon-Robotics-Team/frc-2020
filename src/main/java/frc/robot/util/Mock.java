@@ -38,15 +38,8 @@ public class Mock {
         return createMockable(clazz, param, isReal);
     }
 
-    public static <T, S> T createMockable(Class<T> clazz, Integer param) {
-        boolean isReal = param != null;
-        if (!isReal) {
-            param = -1; // why java why
-        }
-        return createMockable(clazz, (int) param, isReal);
-    }
-
     public static <T> T mock(Class<T> classToMock) {
-        return Mockito.mock(classToMock, Mockito.withSettings().stubOnly().defaultAnswer(Mockito.RETURNS_DEEP_STUBS));
+        return Mockito.mock(classToMock,
+                Mockito.withSettings().stubOnly().defaultAnswer(Mockito.RETURNS_DEEP_STUBS));
     }
 }

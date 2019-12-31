@@ -1,21 +1,23 @@
 package frc.robot.util;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.CANSparkMaxLowLevel.PeriodicFrame;
 
-public class SparkMaxFactory {
-    // Periodic Status Frames: http://www.revrobotics.com/sparkmax-users-manual/#section-3-3-2-1
-    
+public class SparkMaxFactory { // Periodic Status Frames:
+    // http://www.revrobotics.com/sparkmax-users-manual/#section-3-3-2-1
+
     private SparkMaxFactory() {}
 
     public static final double voltageCompensation = 11;
 
     public static CANSparkMax create(int port) {
-        // var spark = new CANSparkMax(port, MotorType.kBrushless);
-        var spark = Mock.mock(CANSparkMax.class);
+        var spark = new CANSparkMax(port, MotorType.kBrushless);
+        // var spark = Mock.mock(CANSparkMax.class);
 
         spark.clearFaults();
+        spark.setIdleMode(IdleMode.kBrake);
         spark.enableVoltageCompensation(voltageCompensation);
         spark.getEncoder().setPosition(0);
 

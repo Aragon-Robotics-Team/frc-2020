@@ -1,10 +1,9 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANEncoder;
-import com.revrobotics.CANPIDController.ArbFFUnits;
+import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.ControlType;
-
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
@@ -16,7 +15,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.util.NavX;
 import frc.robot.util.SparkMaxFactory;
 
-public class Drivetrain extends SubsystemBase {
+public final class Drivetrain extends SubsystemBase {
     public static class Config {
         public int leftMotor;
         public int rightMotor;
@@ -33,7 +32,7 @@ public class Drivetrain extends SubsystemBase {
         public SimpleMotorFeedforward feedforward;
     }
 
-    private class Motors {
+    private final class Motors {
         final Config config;
 
         CANSparkMax leftMotor;
@@ -54,7 +53,7 @@ public class Drivetrain extends SubsystemBase {
         }
     }
 
-    public class Odometry {
+    public final class Odometry {
         private static final double updatePeriod = 0.01;
 
         public double leftVel;
@@ -65,7 +64,9 @@ public class Drivetrain extends SubsystemBase {
 
         public Pose2d pose = new Pose2d();
 
+        final Config config;
         final Motors motors;
+
         CANEncoder leftEncoder;
         CANEncoder rightEncoder;
 
@@ -75,7 +76,7 @@ public class Drivetrain extends SubsystemBase {
 
         private Odometry(final Motors _motors) {
             motors = _motors;
-            final var config = motors.config;
+            config = motors.config;
 
             final var rotationsToMeters = config.gearRatio * config.wheelCircumference;
             final var rpmToMetersPerSecond = rotationsToMeters / 60;
@@ -96,22 +97,22 @@ public class Drivetrain extends SubsystemBase {
             notifier.startPeriodic(updatePeriod);
         }
 
-        public synchronized void resetToPose(final Pose2d pose) {
+        public final synchronized void resetToPose(final Pose2d pose) {
             leftEncoder.setPosition(0);
             rightEncoder.setPosition(0);
 
             odometry.resetPosition(pose, NavX.getRotation());
         }
 
-        public synchronized DifferentialDriveWheelSpeeds toWheelSpeeds() {
+        public final synchronized DifferentialDriveWheelSpeeds toWheelSpeeds() {
             return new DifferentialDriveWheelSpeeds(leftVel, rightVel);
         }
 
-        public synchronized ChassisSpeeds toChassisSpeeds() {
+        public final synchronized ChassisSpeeds toChassisSpeeds() {
             return kinematics.toChassisSpeeds(toWheelSpeeds());
         }
 
-        private synchronized void update() {
+        private final synchronized void update() {
             leftVel = leftEncoder.getVelocity();
             leftPos = leftEncoder.getPosition();
 
@@ -122,29 +123,67 @@ public class Drivetrain extends SubsystemBase {
         }
     }
 
-    public class Controller {
+    public final class Controller {
+        final Config config;
         final Motors motors;
+        final Odometry odometry;
 
-        SimpleMotorFeedforward feedforward;
+        final CANPIDController leftPID;
+        final CANPIDController rightPID;
 
-        private Controller(Motors _motors) {
-            motors = _motors;
-            final var config = motors.config;
+        final SimpleMotorFeedforward feedforward; // TODO: separate left/right ff?
+
+        private Controller(final Odometry _odometry) {
+            odometry = _odometry;
+            motors = odometry.motors;
+            config = odometry.config;
+
+            leftPID = motors.leftMotor.getPIDController();
+            rightPID = motors.rightMotor.getPIDController();
 
             feedforward = config.feedforward;
         }
+
+        // Drive methods:
+        // 1. Absolute voltage (l/r voltage directly)
+        // 2. Velocity, feedforward only (DifferentialDriveWheelSpeeds) (calls absolute
+        // voltage)
+        // 3. Arcade, feedforward only (ChassisSpeeds) (calls Velocity ff only)
+
+        // 1
+        public final void driveVoltage(double leftVoltage, double rightVoltage) {
+            leftPID.setReference(leftVoltage, ControlType.kVoltage);
+            rightPID.setReference(rightVoltage, ControlType.kVoltage);
+        }
+
+        // 2
+        public final void driveVelocityFF(DifferentialDriveWheelSpeeds vel) {
+            driveVoltage(feedforward.calculate(vel.leftMetersPerSecond),
+                    feedforward.calculate(vel.rightMetersPerSecond));
+        }
+
+        // 2
+        public final void driveVelocityFF(DifferentialDriveWheelSpeeds vel,
+                DifferentialDriveWheelSpeeds accel) {
+            driveVoltage(feedforward.calculate(vel.leftMetersPerSecond, accel.leftMetersPerSecond),
+                    feedforward.calculate(vel.rightMetersPerSecond, accel.rightMetersPerSecond));
+        }
+
+        // 3
+        public final void driveChassisFF(ChassisSpeeds speeds) {
+            driveVelocityFF(odometry.kinematics.toWheelSpeeds(speeds));
+        }
     }
 
-    Motors motors;
-    Odometry odometry;
+    final Config config;
+    final Motors motors;
+    final Odometry odometry;
+    final Controller controller;
 
-    public Drivetrain(final Config config) {
+    public Drivetrain(final Config _config) {
+        config = _config;
         motors = new Motors(config);
-
         odometry = new Odometry(motors);
-    }
-
-    public void driveGood(final DifferentialDriveWheelSpeeds speeds) {
-        motors.leftMotor.getPIDController().setReference(99, ControlType.kVelocity, 0, 99, ArbFFUnits.kVoltage);
+        controller = new Controller(odometry);
     }
 }
