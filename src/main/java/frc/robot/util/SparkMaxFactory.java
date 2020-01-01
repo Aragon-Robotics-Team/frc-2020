@@ -1,11 +1,14 @@
 package frc.robot.util;
 
+import com.ctre.phoenix.motorcontrol.can.SlotConfiguration;
+import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.CANSparkMaxLowLevel.PeriodicFrame;
 
-public class SparkMaxFactory { // Periodic Status Frames:
+public class SparkMaxFactory {
+    // Periodic Status Frames:
     // http://www.revrobotics.com/sparkmax-users-manual/#section-3-3-2-1
 
     private SparkMaxFactory() {}
@@ -44,5 +47,24 @@ public class SparkMaxFactory { // Periodic Status Frames:
         follower.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 500);
 
         return follower;
+    }
+
+    public static void copyPID(CANPIDController spark, SlotConfiguration pid, int slotID) {
+        // What's
+        // missing:
+        // OutputRange min = -max
+        // DFilter
+
+        spark.setP(pid.kP, slotID);
+        spark.setI(pid.kI, slotID);
+        spark.setD(pid.kD, slotID);
+        spark.setFF(pid.kF, slotID);
+        spark.setIMaxAccum(pid.maxIntegralAccumulator, slotID);
+        spark.setIZone(pid.integralZone, slotID);
+        spark.setOutputRange(-pid.closedLoopPeakOutput, -pid.closedLoopPeakOutput, slotID);
+    }
+
+    public static void copyPID(CANPIDController spark, SlotConfiguration pid) {
+        copyPID(spark, pid, 0);
     }
 }

@@ -27,8 +27,8 @@ spotless {
         removeUnusedImports()
         replaceRegex "Star Import", "import.*\\*;\\n", ""
         replace "Multiple Semicolon", ";;", ";"
-        replaceRegex "Whitespace after {", "\\{[\\s]*", "{"
-        replaceRegex "Whitespace before }", "[\\s]*\\}", "}"
+        replaceRegex "Whitespace after {", "\\{[\\s]*", "{\n"
+        replaceRegex "Whitespace before }", "[\\s]*\\}", "\n}"
 
         // Use this only for organize imports
         // Will be replaced with eclipse format file

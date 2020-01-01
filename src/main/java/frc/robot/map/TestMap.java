@@ -1,5 +1,6 @@
 package frc.robot.map;
 
+import com.ctre.phoenix.motorcontrol.can.SlotConfiguration;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.util.Units;
 import frc.robot.subsystems.Drivetrain;
@@ -17,6 +18,9 @@ public class TestMap extends Map {
                 trackWidth = Units.inchesToMeters(16);
 
                 feedforward = new SimpleMotorFeedforward(0, 0, 0);
+
+                velocityPID = new SlotConfiguration();
+                velocityPID.kP = 1.0;
             }
         };
     }

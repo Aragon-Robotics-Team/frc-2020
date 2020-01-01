@@ -1,22 +1,29 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.can.SlotConfiguration;
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANPIDController;
+import com.revrobotics.CANPIDController.ArbFFUnits;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.ControlType;
 import edu.wpi.first.wpilibj.Notifier;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.controller.RamseteController;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.util.NavX;
 import frc.robot.util.SparkMaxFactory;
+import frc.robot.util.Tuple;
 
 public final class Drivetrain extends SubsystemBase {
     public static class Config {
+        // Motor
         public int leftMotor;
         public int rightMotor;
         public int leftMotorSlave;
@@ -25,11 +32,16 @@ public final class Drivetrain extends SubsystemBase {
         public boolean invertAll = false;
         public boolean invertRight = true;
 
+        // Odometry
         public double gearRatio;
         public double wheelCircumference; // meters
         public double trackWidth; // meters
 
+        // Controller
         public SimpleMotorFeedforward feedforward;
+        public SlotConfiguration velocityPID;
+
+        // Director
     }
 
     private final class Motors {
@@ -56,11 +68,8 @@ public final class Drivetrain extends SubsystemBase {
     public final class Odometry {
         private static final double updatePeriod = 0.01;
 
-        public double leftVel;
-        public double leftPos;
-
-        public double rightVel;
-        public double rightPos;
+        public final Tuple vel = new Tuple();
+        public final Tuple pos = new Tuple();
 
         public Pose2d pose = new Pose2d();
 
@@ -105,7 +114,7 @@ public final class Drivetrain extends SubsystemBase {
         }
 
         public final synchronized DifferentialDriveWheelSpeeds toWheelSpeeds() {
-            return new DifferentialDriveWheelSpeeds(leftVel, rightVel);
+            return vel.get();
         }
 
         public final synchronized ChassisSpeeds toChassisSpeeds() {
@@ -113,17 +122,20 @@ public final class Drivetrain extends SubsystemBase {
         }
 
         private final synchronized void update() {
-            leftVel = leftEncoder.getVelocity();
-            leftPos = leftEncoder.getPosition();
+            vel.set(leftEncoder.getVelocity(), rightEncoder.getVelocity());
+            pos.set(leftEncoder.getPosition(), rightEncoder.getPosition());
 
-            rightVel = rightEncoder.getVelocity();
-            rightPos = rightEncoder.getPosition();
-
-            pose = odometry.update(NavX.getRotation(), leftPos, rightPos);
+            pose = odometry.update(NavX.getRotation(), pos.left, pos.right);
         }
     }
 
     public final class Controller {
+        public final Tuple savedVel = new Tuple();
+        private final Tuple tempAccel = new Tuple();
+        private final Tuple tempVoltage = new Tuple();
+        private final Tuple tempVel = new Tuple();
+        private double lastTime = Timer.getFPGATimestamp();
+
         final Config config;
         final Motors motors;
         final Odometry odometry;
@@ -142,36 +154,171 @@ public final class Drivetrain extends SubsystemBase {
             rightPID = motors.rightMotor.getPIDController();
 
             feedforward = config.feedforward;
+
+            SparkMaxFactory.copyPID(leftPID, config.velocityPID); // TODO: separate left/right pid?
+            SparkMaxFactory.copyPID(rightPID, config.velocityPID);
+        }
+
+        // Can only be called once per frame
+        private final Tuple calcAccel(Tuple vel) {
+            // TODO: smoothing?
+            var time = Timer.getFPGATimestamp();
+            var dt = time - lastTime;
+
+            tempAccel.set((vel.left - savedVel.left) / dt, (vel.right - savedVel.right) / dt);
+
+            lastTime = time;
+
+            return tempAccel;
+        }
+
+        private final Tuple calcVoltage(Tuple vel, Tuple accel) {
+            return tempVoltage.set(feedforward.calculate(vel.left, accel.left),
+                    feedforward.calculate(vel.right, accel.right));
+        }
+
+        private final Tuple calcVoltage(Tuple vel) {
+            return calcVoltage(vel, calcAccel(vel));
+        }
+
+        private final Tuple calcVel(DifferentialDriveWheelSpeeds speeds) {
+            return tempVel.set(speeds);
+        }
+
+        private final Tuple calcVel(ChassisSpeeds speeds) {
+            return calcVel(odometry.kinematics.toWheelSpeeds(speeds));
+        }
+
+        public final void reset() {
+            savedVel.clear();
+            tempAccel.clear();
+            tempVel.clear();
+            tempVoltage.clear();
+
+            lastTime = Timer.getFPGATimestamp();
         }
 
         // Drive methods:
+        // 0. Raw velocity and feedforward
         // 1. Absolute voltage (l/r voltage directly)
         // 2. Velocity, feedforward only (DifferentialDriveWheelSpeeds) (calls absolute
         // voltage)
         // 3. Arcade, feedforward only (ChassisSpeeds) (calls Velocity ff only)
+        // 4. Velocity (with PID)
+        // 5. Arcade (with PID) (ChassisSpeeds)
 
-        // 1
-        public final void driveVoltage(double leftVoltage, double rightVoltage) {
-            leftPID.setReference(leftVoltage, ControlType.kVoltage);
-            rightPID.setReference(rightVoltage, ControlType.kVoltage);
+        public final void driveZero() {
+            savedVel.clear();
+            _driveVelocity(Tuple.zero);
         }
 
-        // 2
-        public final void driveVelocityFF(DifferentialDriveWheelSpeeds vel) {
-            driveVoltage(feedforward.calculate(vel.leftMetersPerSecond),
-                    feedforward.calculate(vel.rightMetersPerSecond));
+        // // // // // 0
+        private final void _driveRawVelocity(Tuple vel, Tuple feedforward) {
+            leftPID.setReference(vel.left, ControlType.kVelocity, 0, feedforward.left,
+                    ArbFFUnits.kVoltage);
+            rightPID.setReference(vel.right, ControlType.kVelocity, 0, feedforward.right,
+                    ArbFFUnits.kVoltage);
         }
 
-        // 2
-        public final void driveVelocityFF(DifferentialDriveWheelSpeeds vel,
-                DifferentialDriveWheelSpeeds accel) {
-            driveVoltage(feedforward.calculate(vel.leftMetersPerSecond, accel.leftMetersPerSecond),
-                    feedforward.calculate(vel.rightMetersPerSecond, accel.rightMetersPerSecond));
+        // // // // // 1
+        private final void _driveVoltage(Tuple voltage) {
+            leftPID.setReference(voltage.left, ControlType.kVoltage);
+            rightPID.setReference(voltage.right, ControlType.kVoltage);
         }
 
-        // 3
+        public final void driveVoltage(Tuple voltage) {
+            savedVel.set(odometry.vel);
+            _driveVoltage(voltage);
+        }
+
+        // // // // // 2
+        private final void _driveVelocityFF(Tuple vel, Tuple accel) {
+            _driveVoltage(calcVoltage(vel, accel));
+        }
+
+        private final void _driveVelocityFF(Tuple vel) {
+            _driveVoltage(calcVoltage(vel));
+        }
+
+        public final void driveVelocityFF(Tuple vel, Tuple accel) {
+            savedVel.set(vel);
+            _driveVelocityFF(vel, accel);
+        }
+
+        public final void driveVelocityFF(Tuple vel) {
+            savedVel.set(vel);
+            _driveVelocityFF(vel);
+        }
+
+        public final void driveVelocityFF(DifferentialDriveWheelSpeeds speeds) {
+            driveVelocityFF(calcVel(speeds));
+        }
+
+        // // // // // 3
         public final void driveChassisFF(ChassisSpeeds speeds) {
-            driveVelocityFF(odometry.kinematics.toWheelSpeeds(speeds));
+            driveVelocityFF(calcVel(speeds));
+        }
+
+        // // // // // 4
+        private final void _driveVelocity(Tuple vel) {
+            _driveRawVelocity(vel, calcVoltage(vel));
+        }
+
+        private final void _driveVelocity(Tuple vel, Tuple accel) {
+            _driveRawVelocity(vel, calcVoltage(vel, accel));
+        }
+
+        public final void driveVelocity(Tuple vel) {
+            savedVel.set(vel);
+            _driveVelocity(vel);
+        }
+
+        public final void driveVelocity(Tuple vel, Tuple accel) {
+            savedVel.set(vel);
+            _driveVelocity(vel, accel);
+        }
+
+        public final void driveVelocity(DifferentialDriveWheelSpeeds speeds) {
+            driveVelocity(calcVel(speeds));
+        }
+
+        // // // // // 5
+        public final void driveChassis(ChassisSpeeds speeds) {
+            driveVelocity(calcVel(speeds));
+        }
+    }
+
+    public final class Director {
+        final Config config;
+        final Motors motors;
+        final Odometry odometry;
+        final Controller controller;
+
+        RamseteController ramsete = new RamseteController();
+
+        public Director(final Controller _controller) {
+            controller = _controller;
+            odometry = controller.odometry;
+            motors = controller.motors;
+            config = controller.config;
+        }
+
+        public final void setSavedVel(Trajectory.State state) {
+            controller.savedVel.set(odometry.kinematics
+                    .toWheelSpeeds(new ChassisSpeeds(state.velocityMetersPerSecond, 0,
+                            state.curvatureRadPerMeter * state.velocityMetersPerSecond)));
+        }
+
+        private final DifferentialDriveWheelSpeeds getNextRamsete(Trajectory.State state) {
+            return odometry.kinematics.toWheelSpeeds(ramsete.calculate(odometry.pose, state));
+        }
+
+        public final void driveRamseteFF(Trajectory.State state) {
+            controller.driveVelocityFF(getNextRamsete(state));
+        }
+
+        public final void driveRamsete(Trajectory.State state) {
+            controller.driveVelocity(getNextRamsete(state));
         }
     }
 
@@ -179,11 +326,13 @@ public final class Drivetrain extends SubsystemBase {
     final Motors motors;
     final Odometry odometry;
     final Controller controller;
+    final Director director;
 
     public Drivetrain(final Config _config) {
         config = _config;
         motors = new Motors(config);
         odometry = new Odometry(motors);
         controller = new Controller(odometry);
+        director = new Director(controller);
     }
 }
