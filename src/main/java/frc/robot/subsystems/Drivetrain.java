@@ -42,6 +42,8 @@ public final class Drivetrain extends SubsystemBase {
         public SlotConfiguration velocityPID;
 
         // Director
+        public double maxVelocity;
+        public double maxAcceleration;
     }
 
     private final class Motors {
