@@ -5,7 +5,9 @@ import com.revrobotics.CANEncoder;
 import com.revrobotics.CANPIDController;
 import com.revrobotics.CANPIDController.ArbFFUnits;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.ControlType;
+import com.revrobotics.EncoderType;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.controller.RamseteController;
@@ -32,6 +34,9 @@ public final class Drivetrain extends SubsystemBase {
         public boolean invertAll = false;
         public boolean invertRight = true;
 
+        public MotorType motorType = MotorType.kBrushless;
+        public int quadratureResolution;
+
         // Odometry
         public double gearRatio;
         public double wheelCircumference; // meters
@@ -57,10 +62,12 @@ public final class Drivetrain extends SubsystemBase {
         private Motors(final Config _config) {
             config = _config;
 
-            leftMotor = SparkMaxFactory.createMaster(config.leftMotor);
-            rightMotor = SparkMaxFactory.createMaster(config.rightMotor);
-            leftMotorSlave = SparkMaxFactory.createFollower(leftMotor, config.leftMotorSlave);
-            rightMotorSlave = SparkMaxFactory.createFollower(rightMotor, config.rightMotorSlave);
+            leftMotor = SparkMaxFactory.createMaster(config.leftMotor, config.motorType);
+            rightMotor = SparkMaxFactory.createMaster(config.rightMotor, config.motorType);
+            leftMotorSlave = SparkMaxFactory.createFollower(leftMotor, config.leftMotorSlave,
+                    config.motorType);
+            rightMotorSlave = SparkMaxFactory.createFollower(rightMotor, config.rightMotorSlave,
+                    config.motorType);
 
             leftMotor.setInverted(config.invertAll);
             rightMotor.setInverted(config.invertAll ^ config.invertRight);
@@ -94,8 +101,16 @@ public final class Drivetrain extends SubsystemBase {
 
             kinematics = new DifferentialDriveKinematics(config.trackWidth);
 
-            leftEncoder = motors.leftMotor.getEncoder();
-            rightEncoder = motors.rightMotor.getEncoder();
+            switch (config.motorType) {
+                case kBrushless:
+                    leftEncoder = motors.leftMotor.getEncoder();
+                    rightEncoder = motors.rightMotor.getEncoder();
+                case kBrushed:
+                    leftEncoder = motors.leftMotor.getEncoder(EncoderType.kQuadrature,
+                            config.quadratureResolution);
+                    rightEncoder = motors.rightMotor.getEncoder(EncoderType.kQuadrature,
+                            config.quadratureResolution);
+            }
 
             // TODO: Test if SparkMAX ConversionFactor works - maybe implement myself?
 

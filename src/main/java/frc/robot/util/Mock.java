@@ -4,7 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import org.mockito.Mockito;
 
 public class Mock {
-    public static <T, S> T createMockable(Class<T> clazz, S param, boolean isReal) {
+    public static final <T, S> T createMockable(Class<T> clazz, S param, boolean isReal) {
         if (isReal) {
             try {
                 return clazz.getConstructor(param.getClass()).newInstance(param);
@@ -19,7 +19,7 @@ public class Mock {
     }
 
     // Why does Java force autoboxing to Integer?
-    public static <T> T createMockable(Class<T> clazz, int param, boolean isReal) {
+    public static final <T> T createMockable(Class<T> clazz, int param, boolean isReal) {
         if (isReal) {
             try {
                 return clazz.getConstructor(int.class).newInstance(param);
@@ -33,12 +33,13 @@ public class Mock {
         }
     }
 
-    public static <T, S> T createMockable(Class<T> clazz, S param) {
+    public static final <T, S> T createMockable(Class<T> clazz, S param) {
         boolean isReal = param != null;
         return createMockable(clazz, param, isReal);
     }
 
-    public static <T> T mock(Class<T> classToMock) {
+    public static final <T> T mock(Class<T> classToMock) {
+        System.out.println("Mocking class: " + classToMock.getName());
         return Mockito.mock(classToMock,
                 Mockito.withSettings().stubOnly().defaultAnswer(Mockito.RETURNS_DEEP_STUBS));
     }
