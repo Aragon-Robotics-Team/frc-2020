@@ -16,7 +16,8 @@
         "**/.classpath": true,
         "**/.settings": true,
         "**/.wpilib": true,
-        "**/lib": true // vision/lib jars
+        "**/lib": true, // jars
+        "**/.factorypath": true
     },
     // Use `gradlew build` or `gradlew spotlessApply` instead
     // config xml @ ./gradle/eclipse-style.xml
