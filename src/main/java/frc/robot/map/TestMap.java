@@ -3,6 +3,9 @@ package frc.robot.map;
 import com.ctre.phoenix.motorcontrol.can.SlotConfiguration;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.util.Units;
+import frc.robot.oi.GenericController;
+import frc.robot.oi.Joystick;
+import frc.robot.oi.OI;
 import frc.robot.subsystems.Drivetrain;
 
 public class TestMap extends Map {
@@ -23,5 +26,11 @@ public class TestMap extends Map {
                 velocityPID.kP = 1.0;
             }
         };
+    }
+
+    public Joystick getJoystick() {
+        var j = new GenericController(0);
+        j.addChild(new OI(1));
+        return j;
     }
 }

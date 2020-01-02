@@ -4,11 +4,14 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Sendable;
 import edu.wpi.first.wpilibj.smartdashboard.SendableBuilder;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import java.util.ArrayList;
+import java.util.List;
 
 public class OI implements Sendable {
     protected static final DriverStation ds = DriverStation.getInstance();
 
     public final int port;
+    public final List<OI> children = new ArrayList<OI>(0);
 
     public OI(final int _port) {
         port = _port;
@@ -27,6 +30,11 @@ public class OI implements Sendable {
 
     protected final Trigger getButton(final int button) {
         return new Trigger(() -> isPressed(button));
+    }
+
+    public void addChild(OI child) {
+        // Only to keep a reference so not GCed
+        children.add(child);
     }
 
     public final void initSendable(SendableBuilder builder) {}

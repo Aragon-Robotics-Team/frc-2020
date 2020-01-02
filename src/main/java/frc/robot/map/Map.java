@@ -1,5 +1,6 @@
 package frc.robot.map;
 
+import frc.robot.oi.Joystick;
 import frc.robot.subsystems.Drivetrain;
 
 public abstract class Map {
@@ -8,4 +9,6 @@ public abstract class Map {
     }
 
     public abstract Drivetrain.Config getDrivetrainConfig();
+
+    public abstract Joystick getJoystick();
 }
