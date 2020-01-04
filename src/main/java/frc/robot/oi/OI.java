@@ -32,9 +32,10 @@ public class OI implements Sendable {
         return new Trigger(() -> isPressed(button));
     }
 
-    public void addChild(OI child) {
+    public OI addChild(OI child) {
         // Only to keep a reference so not GCed
         children.add(child);
+        return this;
     }
 
     public final void initSendable(SendableBuilder builder) {}

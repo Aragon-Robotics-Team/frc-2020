@@ -24,4 +24,10 @@ public class Joystick extends OI {
     public boolean disableCompressor() {
         return false;
     }
+
+    public Joystick addChild(OI child) {
+        // Only to keep a reference so not GCed
+        children.add(child);
+        return this;
+    }
 }

@@ -13,7 +13,7 @@ public class SparkMaxFactory {
 
     private SparkMaxFactory() {}
 
-    public static final double voltageCompensation = 11;
+    public static final double voltageCompensation = 12;
 
     public static CANSparkMax create(int port, MotorType type) {
         CANSparkMax spark;

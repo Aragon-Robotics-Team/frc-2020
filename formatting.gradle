@@ -34,7 +34,7 @@ spotless {
         // Will be replaced with eclipse format file
         googleJavaFormat()
 
-        eclipseFormatFile 'gradle/eclipse-style.xml'
+        eclipse().configFile('gradle/eclipse-style.xml')
     }
 }
 

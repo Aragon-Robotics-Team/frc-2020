@@ -24,13 +24,14 @@ public class TestMap extends Map {
 
                 velocityPID = new SlotConfiguration();
                 velocityPID.kP = 1.0;
+
+                maxVelocity = 10; // m/s
+                maxRotation = 1; // rad/s
             }
         };
     }
 
     public Joystick getJoystick() {
-        var j = new GenericController(0);
-        j.addChild(new OI(1));
-        return j;
+        return (new GenericController(0)).addChild(new OI(1));
     }
 }

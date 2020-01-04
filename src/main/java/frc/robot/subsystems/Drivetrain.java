@@ -49,6 +49,7 @@ public final class Drivetrain extends SubsystemBase {
         // Director
         public double maxVelocity;
         public double maxAcceleration;
+        public double maxRotation;
     }
 
     private final class Motors {
@@ -320,6 +321,8 @@ public final class Drivetrain extends SubsystemBase {
             config = controller.config;
         }
 
+        // Autonomous
+
         public final void setSavedVel(Trajectory.State state) {
             controller.savedVel.set(odometry.kinematics
                     .toWheelSpeeds(new ChassisSpeeds(state.velocityMetersPerSecond, 0,
@@ -336,6 +339,22 @@ public final class Drivetrain extends SubsystemBase {
 
         public final void driveRamsete(Trajectory.State state) {
             controller.driveVelocity(getNextRamsete(state));
+        }
+
+        // Teleop
+
+        /** speeds.left is throttle -1 to 1; speeds.right is rotation -1 to 1 */
+        private final ChassisSpeeds convertJoystickToSpeeds(Tuple speeds) {
+            return new ChassisSpeeds(speeds.left * config.maxVelocity, 0,
+                    speeds.left * config.maxRotation);
+        }
+
+        public final void driveArcadeFF(Tuple speeds) {
+            controller.driveChassisFF(convertJoystickToSpeeds(speeds));
+        }
+
+        public final void driveArcade(Tuple speeds) {
+            controller.driveChassis(convertJoystickToSpeeds(speeds));
         }
     }
 

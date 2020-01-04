@@ -4,9 +4,7 @@ import frc.robot.oi.Joystick;
 import frc.robot.subsystems.Drivetrain;
 
 public abstract class Map {
-    public static Map getMap() {
-        return new TestMap();
-    }
+    public static final Map map = new TestMap();
 
     public abstract Drivetrain.Config getDrivetrainConfig();
 
