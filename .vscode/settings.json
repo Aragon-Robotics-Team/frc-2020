@@ -27,6 +27,7 @@
     "wpilib.autoStartRioLog": false,
     "wpilib.autoSaveOnDeploy": true,
     "wpilib.skipTests": true,
+    "wpilib.additionalGradleArguments": "--info",
     "editor.detectIndentation": false,
     "editor.tabSize": 4,
     "editor.insertSpaces": true,
