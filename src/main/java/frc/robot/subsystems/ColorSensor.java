@@ -8,6 +8,8 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.SuppliedValueWidget;
 import edu.wpi.first.wpilibj.util.Color;
+import edu.wpi.first.wpilibj.util.Color8Bit;
+import frc.robot.util.ColorUtils;
 import java.util.Map;
 
 public class ColorSensor {
@@ -32,12 +34,15 @@ public class ColorSensor {
         widget.withWidget(BuiltInWidgets.kBooleanBox).withPosition(0, 0).withSize(3, 3);
         // .withProperties(Map.of("Color when true", "#FFFFFF"));
 
-        setColor(new java.awt.Color(100, 250, 0));
+        setColor(ColorUtils.toHexString(new Color8Bit(Color.kFuchsia)));
     }
 
-    private final void setColor(java.awt.Color c) {
-        // var i = c.getRGB();
-        var i = toActualString(c);
+    /*
+     * public final boolean isConnected() { return color.m_simDevice != null; // private }
+     */
+
+    private final void setColor(String i) {
+        // String i = ColorUtils.toHexString(c);
         widget.withProperties(Map.of("Color when false", i, "Color when true", i));
     }
 
@@ -57,23 +62,9 @@ public class ColorSensor {
     }
 
     private final void periodicSlow() {
-        var c = color.getColor();
+        var c = ColorUtils.toHexString(ColorUtils.getBrightColor(color));
 
-        System.out.println(toString(c));
-        var C = toColor(c);
-        setColor(C);
-        System.out.println(toActualString(C));
-    }
-
-    public static final String toString(Color c) {
-        return String.format("(%.4f, %.4f, %.4f)", c.red, c.green, c.blue);
-    }
-
-    public static final java.awt.Color toColor(Color c) {
-        return new java.awt.Color((float) c.red, (float) c.green, (float) c.blue);
-    }
-
-    public static final String toActualString(java.awt.Color c) {
-        return String.format("#%02X%02X%02X", c.getRed(), c.getGreen(), c.getBlue());
+        System.out.println(c);
+        setColor(c);
     }
 }
