@@ -18,6 +18,11 @@ public class OI implements Sendable {
         setup();
     }
 
+    public OI() {
+        // Null OI
+        port = -1;
+    }
+
     protected void setup() {}
 
     protected final double getAxis(final int axis) {
