@@ -17,11 +17,14 @@ import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.util.NavX;
 import frc.robot.util.SparkMaxFactory;
 import frc.robot.util.Tuple;
+import java.util.Map;
 
 public final class Drivetrain extends SubsystemBase {
     public static class Config {
@@ -38,13 +41,13 @@ public final class Drivetrain extends SubsystemBase {
         public int quadratureResolution;
 
         // Odometry
-        public double gearRatio;
-        public double wheelCircumference; // meters
-        public double trackWidth; // meters
+        public double gearRatio = 1;
+        public double wheelCircumference = 1; // meters
+        public double trackWidth = 1; // meters
 
         // Controller
-        public SimpleMotorFeedforward feedforward;
-        public SlotConfiguration velocityPID;
+        public SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(0, 1);
+        public SlotConfiguration velocityPID = new SlotConfiguration();
 
         // Director
         public double maxVelocity;
@@ -370,5 +373,11 @@ public final class Drivetrain extends SubsystemBase {
         odometry = new Odometry(motors);
         controller = new Controller(odometry);
         director = new Director(controller);
+
+        var tab = Shuffleboard.getTab("Drivetrain");
+        tab.addNumber("Left Pos", () -> odometry.pos.left).withWidget(BuiltInWidgets.kGraph)
+                .withProperties(Map.of("Visible time", 5));
+        tab.addNumber("Right Pos", () -> odometry.pos.right).withWidget(BuiltInWidgets.kGraph)
+                .withProperties(Map.of("Visible time", 5));
     }
 }

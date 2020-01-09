@@ -5,6 +5,10 @@ public class Joystick extends OI {
         super(port);
     }
 
+    public Joystick() {
+        super();
+    }
+
     public double getThrottle() {
         return 0;
     }
