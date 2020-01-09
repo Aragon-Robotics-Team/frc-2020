@@ -1,9 +1,8 @@
 package frc.robot.util;
 
 import com.revrobotics.ColorSensorV3;
-import com.revrobotics.ColorSensorV3.RawColor;
 import edu.wpi.first.wpilibj.util.Color8Bit;
-import edu.wpi.first.wpiutil.math.MathUtil;
+import edu.wpi.first.wpilibj.util.ColorShim;
 
 public class ColorUtils {
     private ColorUtils() {}
@@ -24,7 +23,8 @@ public class ColorUtils {
 
     public static final String toHexString(edu.wpi.first.wpilibj.util.Color c) {
         // Float to 0-255 conversion from java.awt.Color impls
-        return String.format(hexStringFmt, (int) (c.red*255+0.5), (int) (c.green*255+0.5), (int) (c.blue*255+0.5);
+        return String.format(hexStringFmt, (int) (c.red * 255 + 0.5), (int) (c.green * 255 + 0.5),
+                (int) (c.blue * 255 + 0.5));
     }
 
     public static final String toHexString(java.awt.Color c) {
@@ -35,13 +35,13 @@ public class ColorUtils {
         return String.format(hexStringFmt, c.red, c.green, c.blue);
     }
 
-    public static final Color8Bit getBrightColor(ColorSensorV3 sensor) {
-        int red = sensor.getRed();
-        int green = sensor.getGreen();
-        int blue = sensor.getBlue();
+    public static final edu.wpi.first.wpilibj.util.Color getBrightColor(ColorSensorV3 sensor) {
+        double red = sensor.getRed();
+        double green = sensor.getGreen();
+        double blue = sensor.getBlue();
 
-        int max = Math.max(red, Math.max(green, blue));
+        double max = Math.max(red, Math.max(green, blue));
 
-        return new Color8Bit(red / max, green / max, blue / max);
+        return new ColorShim(red / max, green / max, blue / max);
     }
 }
