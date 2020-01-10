@@ -1,5 +1,8 @@
 package art840.frc2020.subsystems;
 
+import art840.frc2020.util.NavX;
+import art840.frc2020.util.SparkMaxFactory;
+import art840.frc2020.util.Tuple;
 import com.ctre.phoenix.motorcontrol.can.SlotConfiguration;
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANPIDController;
@@ -19,9 +22,6 @@ import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import art840.frc2020.util.NavX;
-import art840.frc2020.util.SparkMaxFactory;
-import art840.frc2020.util.Tuple;
 
 public final class Drivetrain extends SubsystemBase {
     public static class Config {

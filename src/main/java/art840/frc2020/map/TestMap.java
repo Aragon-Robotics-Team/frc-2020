@@ -1,12 +1,12 @@
 package art840.frc2020.map;
 
-import com.ctre.phoenix.motorcontrol.can.SlotConfiguration;
-import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
-import edu.wpi.first.wpilibj.util.Units;
 import art840.frc2020.oi.GenericController;
 import art840.frc2020.oi.Joystick;
 import art840.frc2020.oi.OI;
 import art840.frc2020.subsystems.Drivetrain;
+import com.ctre.phoenix.motorcontrol.can.SlotConfiguration;
+import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
+import edu.wpi.first.wpilibj.util.Units;
 
 public class TestMap extends Map {
     public Drivetrain.Config getDrivetrainConfig() {

@@ -22,7 +22,7 @@ spotless {
     }
 
     java {
-        target 'src/main/java/frc/**/*.java'
+        target 'src/main/java/art840/**/*.java'
 
         removeUnusedImports()
         replaceRegex "Star Import", "import.*\\*;\\n", ""
