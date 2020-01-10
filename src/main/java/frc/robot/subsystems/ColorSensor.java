@@ -41,6 +41,10 @@ public class ColorSensor {
         // SmartDashboard.putString("Float Color", ColorUtils.toFloatString(c));
         widget.setColor(s);
 
+        var p = (double) color.getProximity();
+        p = (1.0 - (p / 255.0)) * 10.0;
+        SmartDashboard.putNumber("Distance", p);
+
         // SmartDashboard.putNumber("Color/Red", c.red);
         // SmartDashboard.putNumber("Color/Green", c.green);
         // SmartDashboard.putNumber("Color/Blue", c.blue);
