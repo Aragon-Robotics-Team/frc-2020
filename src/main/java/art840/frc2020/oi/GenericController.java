@@ -19,11 +19,11 @@ public class GenericController extends Joystick {
 
     private static final class Axis {
         public static final int LX = 0;
-        public static final int LY = 1;
+        public static final int LY = 1; // -
         public static final int LT = 2;
         public static final int RT = 3;
         public static final int RX = 4;
-        public static final int RY = 5;
+        public static final int RY = 5; // -
     }
 
     public GenericController(final int port) {
