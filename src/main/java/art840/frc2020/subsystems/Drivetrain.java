@@ -1,5 +1,6 @@
 package art840.frc2020.subsystems;
 
+import art840.frc2020.Robot;
 import art840.frc2020.util.NavX;
 import art840.frc2020.util.SparkMaxFactory;
 import art840.frc2020.util.Tuple;
@@ -23,6 +24,8 @@ import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.util.Map;
 
@@ -230,6 +233,7 @@ public final class Drivetrain extends SubsystemBase {
 
         public final void driveZero() {
             savedVel.clear();
+            System.out.println(Tuple.zero.left + " " + Tuple.zero.right);
             _driveVelocity(Tuple.zero);
         }
 
@@ -249,6 +253,7 @@ public final class Drivetrain extends SubsystemBase {
 
         public final void driveVoltage(Tuple voltage) {
             savedVel.set(odometry.vel);
+            System.out.println(voltage.left + " " + voltage.right);
             _driveVoltage(voltage);
         }
 
@@ -359,13 +364,35 @@ public final class Drivetrain extends SubsystemBase {
         public final void driveArcade(Tuple speeds) {
             controller.driveChassis(convertJoystickToSpeeds(speeds));
         }
+
+        public final Command driveArcadeVSimpleCommand() {
+            return new CommandBase() {
+                private static final double maxV = 3.0;
+
+                Tuple tmp = new Tuple();
+
+                public void initialize() {
+                    controller.driveZero();
+                }
+
+                public void execute() {
+                    tmp.set(maxV * Robot.j.getThrottle(), maxV * Robot.j.getTurn());
+
+                    controller.driveVoltage(tmp);
+                }
+
+                public void end(boolean i) {
+                    controller.driveZero();
+                }
+            };
+        }
     }
 
     final Config config;
     final Motors motors;
-    final Odometry odometry;
-    final Controller controller;
-    final Director director;
+    public final Odometry odometry;
+    public final Controller controller;
+    public final Director director;
 
     public Drivetrain(final Config _config) {
         config = _config;

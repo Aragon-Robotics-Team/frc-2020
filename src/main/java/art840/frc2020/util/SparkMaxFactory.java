@@ -43,15 +43,17 @@ public class SparkMaxFactory {
     }
 
     public static CANSparkMax createFollower(CANSparkMax master, int port, MotorType type) {
-        var follower = create(port, type);
+        return null;
 
-        follower.follow(master, false);
+        // var follower = create(port, type);
 
-        follower.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 500);
-        follower.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 500);
-        follower.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 500);
+        // follower.follow(master, false);
 
-        return follower;
+        // follower.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 500);
+        // follower.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 500);
+        // follower.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 500);
+
+        // return follower;
     }
 
     public static void copyPID(CANPIDController spark, SlotConfiguration pid, int slotID) {
