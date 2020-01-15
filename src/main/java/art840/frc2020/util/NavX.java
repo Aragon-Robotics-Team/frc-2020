@@ -8,7 +8,7 @@ public class NavX {
     private NavX() {}
 
     public static final byte updateRate = 100;
-    public static final boolean invert = false; // TODO: ensure left turn is positive angle
+    public static final boolean invert = false;
 
     public static AHRS ahrs = new AHRS(SPI.Port.kMXP, updateRate);
     public static final double invertConst = invert ? -1 : 1;

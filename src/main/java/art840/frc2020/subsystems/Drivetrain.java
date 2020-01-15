@@ -43,6 +43,9 @@ public final class Drivetrain extends SubsystemBase {
         public MotorType motorType = MotorType.kBrushless;
         public int quadratureResolution;
 
+        public boolean invertAllEncoders = false;
+        public boolean invertRightEncoders = false;
+
         // Odometry
         public double gearRatio = 1;
         public double wheelCircumference = 1; // meters
@@ -119,7 +122,9 @@ public final class Drivetrain extends SubsystemBase {
                             config.quadratureResolution);
             }
 
-            // TODO: Test if SparkMAX ConversionFactor works - maybe implement myself?
+            leftEncoder.setInverted(config.invertAll ^ config.invertAllEncoders);
+            rightEncoder.setInverted(config.invertAll ^ config.invertRight
+                    ^ config.invertAllEncoders ^ config.invertRightEncoders);
 
             leftEncoder.setPositionConversionFactor(rotationsToMeters);
             leftEncoder.setVelocityConversionFactor(rpmToMetersPerSecond);
@@ -367,7 +372,7 @@ public final class Drivetrain extends SubsystemBase {
 
         public final Command driveArcadeVSimpleCommand() {
             return new CommandBase() {
-                private static final double maxV = 3.0;
+                private static final double maxV = 12.0;
 
                 Tuple tmp = new Tuple();
 
@@ -406,5 +411,9 @@ public final class Drivetrain extends SubsystemBase {
                 .withProperties(Map.of("Visible time", 5));
         tab.addNumber("Right Pos", () -> odometry.pos.right).withWidget(BuiltInWidgets.kGraph)
                 .withProperties(Map.of("Visible time", 5));
+
+        tab.addNumber("Pose X", () -> odometry.pose.getTranslation().getX());
+        tab.addNumber("Pose Y", () -> odometry.pose.getTranslation().getY());
+        tab.addNumber("Rotation", () -> odometry.pose.getRotation().getDegrees());
     }
 }
