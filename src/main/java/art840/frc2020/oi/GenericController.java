@@ -30,12 +30,22 @@ public class GenericController extends Joystick {
         super(port);
     }
 
+    private static final double applyDeadband(double val) {
+        final double deadband = 0.05;
+
+        if (Math.abs(val) < deadband) {
+            return 0;
+        } else {
+            return val;
+        }
+    }
+
     public final double getThrottle() {
-        return -getAxis(Axis.LY);
+        return applyDeadband(-getAxis(Axis.LY));
     }
 
     public final double getTurn() {
-        return getAxis(Axis.RX);
+        return applyDeadband(getAxis(Axis.RX));
     }
 
     public final double getThrottle2() {
