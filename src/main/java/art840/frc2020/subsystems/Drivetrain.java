@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -141,6 +142,12 @@ public final class Drivetrain extends SubsystemBase {
 
             this.pose = pose;
             odometry.resetPosition(pose, NavX.getRotation());
+        }
+
+        public final void resetAll() {
+            resetToPose(new Pose2d());
+            vel.clear();
+            pos.clear();
         }
 
         public final synchronized DifferentialDriveWheelSpeeds toWheelSpeeds() {
@@ -279,6 +286,13 @@ public final class Drivetrain extends SubsystemBase {
 
         public final void driveVelocityFF(Tuple vel) {
             savedVel.set(vel);
+
+            SmartDashboard.putNumber("Want Vel Left", vel.left);
+            SmartDashboard.putNumber("Want Vel Right", vel.right);
+
+            SmartDashboard.putNumber("Error Vel Left", vel.left - odometry.vel.left);
+            SmartDashboard.putNumber("Error Vel Right", vel.right - odometry.vel.right);
+
             _driveVelocityFF(vel);
         }
 
@@ -302,6 +316,13 @@ public final class Drivetrain extends SubsystemBase {
 
         public final void driveVelocity(Tuple vel) {
             savedVel.set(vel);
+
+            SmartDashboard.putNumber("Want Vel Left", vel.left);
+            SmartDashboard.putNumber("Want Vel Right", vel.right);
+
+            SmartDashboard.putNumber("Error Vel Left", vel.left - odometry.vel.left);
+            SmartDashboard.putNumber("Error Vel Right", vel.right - odometry.vel.right);
+
             _driveVelocity(vel);
         }
 
@@ -413,18 +434,18 @@ public final class Drivetrain extends SubsystemBase {
         director = new Director(controller);
 
         var tab = Shuffleboard.getTab("Drivetrain");
-        tab.addNumber("Left Pos", () -> odometry.pos.left).withWidget(BuiltInWidgets.kGraph)
-                .withProperties(Map.of("Visible time", 5));
-        tab.addNumber("Right Pos", () -> odometry.pos.right).withWidget(BuiltInWidgets.kGraph)
-                .withProperties(Map.of("Visible time", 5));
+        // tab.addNumber("Left Pos", () -> odometry.pos.left).withWidget(BuiltInWidgets.kGraph)
+        // .withProperties(Map.of("Visible time", 5));
+        // tab.addNumber("Right Pos", () -> odometry.pos.right).withWidget(BuiltInWidgets.kGraph)
+        // .withProperties(Map.of("Visible time", 5));
 
         tab.addNumber("Left Vel", () -> odometry.vel.left).withWidget(BuiltInWidgets.kGraph)
                 .withProperties(Map.of("Visible time", 5));
         tab.addNumber("Right Vel", () -> odometry.vel.right).withWidget(BuiltInWidgets.kGraph)
                 .withProperties(Map.of("Visible time", 5));
 
-        tab.addNumber("Pose X", () -> odometry.pose.getTranslation().getX());
-        tab.addNumber("Pose Y", () -> odometry.pose.getTranslation().getY());
-        tab.addNumber("Rotation", () -> odometry.pose.getRotation().getDegrees());
+        // tab.addNumber("Pose X", () -> odometry.pose.getTranslation().getX());
+        // tab.addNumber("Pose Y", () -> odometry.pose.getTranslation().getY());
+        // tab.addNumber("Rotation", () -> odometry.pose.getRotation().getDegrees());
     }
 }
