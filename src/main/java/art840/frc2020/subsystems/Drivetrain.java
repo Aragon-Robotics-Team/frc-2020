@@ -246,12 +246,12 @@ public final class Drivetrain extends SubsystemBase {
 
         public final void driveZero() {
             savedVel.clear();
-            System.out.println(Tuple.zero.left + " " + Tuple.zero.right);
-            _driveVelocity(Tuple.zero);
+            _driveVoltage(Tuple.zero);
         }
 
         // // // // // 0
         private final void _driveRawVelocity(Tuple vel, Tuple feedforward) {
+            System.out.println("Raw Vel: " + vel + " " + feedforward);
             leftPID.setReference(vel.left, ControlType.kVelocity, 0, feedforward.left,
                     ArbFFUnits.kVoltage);
             rightPID.setReference(vel.right, ControlType.kVelocity, 0, feedforward.right,
@@ -287,6 +287,7 @@ public final class Drivetrain extends SubsystemBase {
         public final void driveVelocityFF(Tuple vel) {
             savedVel.set(vel);
 
+            SmartDashboard.putString("Control Type", "Velocity FF");
             SmartDashboard.putNumber("Want Vel Left", vel.left);
             SmartDashboard.putNumber("Want Vel Right", vel.right);
 
@@ -317,6 +318,7 @@ public final class Drivetrain extends SubsystemBase {
         public final void driveVelocity(Tuple vel) {
             savedVel.set(vel);
 
+            SmartDashboard.putString("Control Type", "Velocity FF + PID");
             SmartDashboard.putNumber("Want Vel Left", vel.left);
             SmartDashboard.putNumber("Want Vel Right", vel.right);
 
@@ -410,7 +412,7 @@ public final class Drivetrain extends SubsystemBase {
                     // tmp.set(v, v);
                     // controller.driveVoltage(tmp);
 
-                    controller.driveChassisFF(new ChassisSpeeds(v, 0, t));
+                    controller.driveChassis(new ChassisSpeeds(v, 0, t));
                 }
 
                 public void end(boolean i) {

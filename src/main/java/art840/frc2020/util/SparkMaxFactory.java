@@ -69,7 +69,7 @@ public class SparkMaxFactory {
         spark.setFF(pid.kF, slotID);
         spark.setIMaxAccum(pid.maxIntegralAccumulator, slotID);
         spark.setIZone(pid.integralZone, slotID);
-        spark.setOutputRange(-pid.closedLoopPeakOutput, -pid.closedLoopPeakOutput, slotID);
+        spark.setOutputRange(-pid.closedLoopPeakOutput, pid.closedLoopPeakOutput, slotID);
     }
 
     public static void copyPID(CANPIDController spark, SlotConfiguration pid) {
