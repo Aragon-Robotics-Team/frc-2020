@@ -139,6 +139,7 @@ public final class Drivetrain extends SubsystemBase {
             leftEncoder.setPosition(0);
             rightEncoder.setPosition(0);
 
+            this.pose = pose;
             odometry.resetPosition(pose, NavX.getRotation());
         }
 
@@ -372,7 +373,8 @@ public final class Drivetrain extends SubsystemBase {
 
         public final Command driveArcadeVSimpleCommand() {
             return new CommandBase() {
-                private static final double maxV = 12.0;
+                // private static final double maxV = 12.0;
+                private static final double maxV = 3.0;
 
                 Tuple tmp = new Tuple();
 
@@ -381,9 +383,13 @@ public final class Drivetrain extends SubsystemBase {
                 }
 
                 public void execute() {
-                    tmp.set(maxV * Robot.j.getThrottle(), maxV * Robot.j.getTurn());
+                    var v = maxV * Robot.j.getThrottle();
+                    var t = 2.0 * Math.PI * -Robot.j.getTurn();
 
-                    controller.driveVoltage(tmp);
+                    // tmp.set(v, v);
+                    // controller.driveVoltage(tmp);
+
+                    controller.driveChassisFF(new ChassisSpeeds(v, 0, t));
                 }
 
                 public void end(boolean i) {
@@ -410,6 +416,11 @@ public final class Drivetrain extends SubsystemBase {
         tab.addNumber("Left Pos", () -> odometry.pos.left).withWidget(BuiltInWidgets.kGraph)
                 .withProperties(Map.of("Visible time", 5));
         tab.addNumber("Right Pos", () -> odometry.pos.right).withWidget(BuiltInWidgets.kGraph)
+                .withProperties(Map.of("Visible time", 5));
+
+        tab.addNumber("Left Vel", () -> odometry.vel.left).withWidget(BuiltInWidgets.kGraph)
+                .withProperties(Map.of("Visible time", 5));
+        tab.addNumber("Right Vel", () -> odometry.vel.right).withWidget(BuiltInWidgets.kGraph)
                 .withProperties(Map.of("Visible time", 5));
 
         tab.addNumber("Pose X", () -> odometry.pose.getTranslation().getX());
