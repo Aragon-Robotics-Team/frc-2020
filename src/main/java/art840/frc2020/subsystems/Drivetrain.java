@@ -380,10 +380,13 @@ public final class Drivetrain extends SubsystemBase {
 
         // Teleop
 
-        /** speeds.left is throttle -1 to 1; speeds.right is rotation -1 to 1 */
+        /**
+         * speeds.left is throttle -1 to 1; speeds.right is rotation -1 to 1 Inverts throttle
+         * because chassisspeeds +rotation is CCW
+         */
         private final ChassisSpeeds convertJoystickToSpeeds(Tuple speeds) {
             return new ChassisSpeeds(speeds.left * config.maxVelocity, 0,
-                    speeds.left * config.maxRotation);
+                    -1 * speeds.right * config.maxRotation);
         }
 
         public final void driveArcadeFF(Tuple speeds) {
@@ -394,11 +397,8 @@ public final class Drivetrain extends SubsystemBase {
             controller.driveChassis(convertJoystickToSpeeds(speeds));
         }
 
-        public final Command driveArcadeVSimpleCommand() {
+        public final Command driveArcade() {
             return new CommandBase() {
-                // private static final double maxV = 12.0;
-                private static final double maxV = 3.0;
-
                 Tuple tmp = new Tuple();
 
                 public void initialize() {
@@ -406,13 +406,7 @@ public final class Drivetrain extends SubsystemBase {
                 }
 
                 public void execute() {
-                    var v = maxV * Robot.j.getThrottle();
-                    var t = 2.0 * Math.PI * -Robot.j.getTurn();
-
-                    // tmp.set(v, v);
-                    // controller.driveVoltage(tmp);
-
-                    controller.driveChassis(new ChassisSpeeds(v, 0, t));
+                    driveArcade(tmp.set(Robot.j.getThrottle(), Robot.j.getTurn()));
                 }
 
                 public void end(boolean i) {

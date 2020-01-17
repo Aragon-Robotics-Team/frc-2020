@@ -27,6 +27,10 @@ public class TestMap extends Map {
                 trackWidth = Units.inchesToMeters(24.0);
 
                 feedforward = new SimpleMotorFeedforward(1.45, 2.41, 0.885);
+                // velocityPID.kP = 0.2;
+
+                maxVelocity = 3; // m/s
+                maxRotation = 2 * Math.PI; // rad/s
             }
         };
     }

@@ -14,7 +14,7 @@ public class Robot extends RobotBase {
     @Override
     public void teleopInit() {
         d.odometry.resetAll();
-        d.director.driveArcadeVSimpleCommand().schedule();
+        d.director.driveArcade().schedule();
     }
 
     @Override
