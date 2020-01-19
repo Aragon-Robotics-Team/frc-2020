@@ -27,7 +27,7 @@ public class SparkMaxFactory {
         spark.clearFaults();
         spark.setIdleMode(IdleMode.kBrake);
         spark.enableVoltageCompensation(voltageCompensation);
-        spark.getEncoder().setPosition(0); // TODO: will this work with brushed?
+        spark.getEncoder().setPosition(0);
 
         return spark;
     }

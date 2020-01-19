@@ -1,7 +1,7 @@
 // // Required in build.gradle:
 //
 // plugins {
-//     id "com.diffplug.gradle.spotless" version "3.26.0" apply false
+//     id "com.diffplug.gradle.spotless" version "3.27.1" apply false
 // }
 //
 // apply from: file("formatting.gradle")
@@ -22,7 +22,7 @@ spotless {
     }
 
     java {
-        target 'src/main/java/art840/**/*.java'
+        target 'src/main/java/**/*.java'
 
         removeUnusedImports()
         replaceRegex "Star Import", "import.*\\*;\\n", ""

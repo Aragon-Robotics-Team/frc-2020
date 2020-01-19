@@ -12,6 +12,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.ControlType;
 import com.revrobotics.EncoderType;
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.controller.RamseteController;
@@ -25,9 +26,12 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
+import edu.wpi.first.wpilibj.trajectory.TrajectoryUtil;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Map;
 
 public final class Drivetrain extends SubsystemBase {
@@ -63,16 +67,12 @@ public final class Drivetrain extends SubsystemBase {
     }
 
     private final class Motors {
-        final Config config;
-
         CANSparkMax leftMotor;
         CANSparkMax rightMotor;
         CANSparkMax leftMotorSlave;
         CANSparkMax rightMotorSlave;
 
-        private Motors(final Config _config) {
-            config = _config;
-
+        private Motors() {
             leftMotor = SparkMaxFactory.createMaster(config.leftMotor, config.motorType);
             rightMotor = SparkMaxFactory.createMaster(config.rightMotor, config.motorType);
             leftMotorSlave = SparkMaxFactory.createFollower(leftMotor, config.leftMotorSlave,
@@ -88,13 +88,10 @@ public final class Drivetrain extends SubsystemBase {
     public final class Odometry {
         private static final double updatePeriod = 0.01;
 
-        public final Tuple vel = new Tuple();
+        public final Tuple vel = new Tuple(); // todo: synchronized
         public final Tuple pos = new Tuple();
 
-        public Pose2d pose = new Pose2d();
-
-        final Config config;
-        final Motors motors;
+        private Pose2d pose = new Pose2d();
 
         CANEncoder leftEncoder;
         CANEncoder rightEncoder;
@@ -103,10 +100,7 @@ public final class Drivetrain extends SubsystemBase {
         DifferentialDriveKinematics kinematics;
         Notifier notifier = new Notifier(this::update);
 
-        private Odometry(final Motors _motors) {
-            motors = _motors;
-            config = motors.config;
-
+        private Odometry() {
             final var rotationsToMeters = config.gearRatio * config.wheelCircumference;
             final var rpmToMetersPerSecond = rotationsToMeters / 60;
 
@@ -164,6 +158,12 @@ public final class Drivetrain extends SubsystemBase {
 
             pose = odometry.update(NavX.getRotation(), pos.left, pos.right);
         }
+
+        // getters
+
+        public final synchronized Pose2d getPose() {
+            return pose;
+        }
     }
 
     public final class Controller {
@@ -173,20 +173,12 @@ public final class Drivetrain extends SubsystemBase {
         private final Tuple tempVel = new Tuple();
         private double lastTime = Timer.getFPGATimestamp();
 
-        final Config config;
-        final Motors motors;
-        final Odometry odometry;
-
         final CANPIDController leftPID;
         final CANPIDController rightPID;
 
         final SimpleMotorFeedforward feedforward; // TODO: separate left/right ff?
 
-        private Controller(final Odometry _odometry) {
-            odometry = _odometry;
-            motors = odometry.motors;
-            config = odometry.config;
-
+        private Controller() {
             leftPID = motors.leftMotor.getPIDController();
             rightPID = motors.rightMotor.getPIDController();
 
@@ -251,7 +243,6 @@ public final class Drivetrain extends SubsystemBase {
 
         // // // // // 0
         private final void _driveRawVelocity(Tuple vel, Tuple feedforward) {
-            System.out.println("Raw Vel: " + vel + " " + feedforward);
             leftPID.setReference(vel.left, ControlType.kVelocity, 0, feedforward.left,
                     ArbFFUnits.kVoltage);
             rightPID.setReference(vel.right, ControlType.kVelocity, 0, feedforward.right,
@@ -344,19 +335,7 @@ public final class Drivetrain extends SubsystemBase {
     }
 
     public final class Director {
-        final Config config;
-        final Motors motors;
-        final Odometry odometry;
-        final Controller controller;
-
         RamseteController ramsete = new RamseteController();
-
-        public Director(final Controller _controller) {
-            controller = _controller;
-            odometry = controller.odometry;
-            motors = controller.motors;
-            config = controller.config;
-        }
 
         // Autonomous
 
@@ -366,16 +345,16 @@ public final class Drivetrain extends SubsystemBase {
                             state.curvatureRadPerMeter * state.velocityMetersPerSecond)));
         }
 
-        private final DifferentialDriveWheelSpeeds getNextRamsete(Trajectory.State state) {
-            return odometry.kinematics.toWheelSpeeds(ramsete.calculate(odometry.pose, state));
+        private final ChassisSpeeds getNextRamsete(Trajectory.State state) {
+            return ramsete.calculate(odometry.getPose(), state);
         }
 
         public final void driveRamseteFF(Trajectory.State state) {
-            controller.driveVelocityFF(getNextRamsete(state));
+            controller.driveChassisFF(getNextRamsete(state));
         }
 
         public final void driveRamsete(Trajectory.State state) {
-            controller.driveVelocity(getNextRamsete(state));
+            controller.driveChassis(getNextRamsete(state));
         }
 
         // Teleop
@@ -414,6 +393,16 @@ public final class Drivetrain extends SubsystemBase {
                 }
             };
         }
+
+        public final Trajectory loadTestPath() {
+            Path path = Filesystem.getDeployDirectory().toPath().resolve("Test.wpilib.json");
+            try {
+                return TrajectoryUtil.fromPathweaverJson(path);
+            } catch (IOException e) {
+                e.printStackTrace();
+                return null; // bruh
+            }
+        }
     }
 
     final Config config;
@@ -424,10 +413,10 @@ public final class Drivetrain extends SubsystemBase {
 
     public Drivetrain(final Config _config) {
         config = _config;
-        motors = new Motors(config);
-        odometry = new Odometry(motors);
-        controller = new Controller(odometry);
-        director = new Director(controller);
+        motors = new Motors();
+        odometry = new Odometry();
+        controller = new Controller();
+        director = new Director();
 
         var tab = Shuffleboard.getTab("Drivetrain");
         // tab.addNumber("Left Pos", () -> odometry.pos.left).withWidget(BuiltInWidgets.kGraph)
