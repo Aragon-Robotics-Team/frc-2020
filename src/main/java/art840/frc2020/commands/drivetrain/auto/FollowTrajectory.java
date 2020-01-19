@@ -1,4 +1,4 @@
-package art840.commands.drivetrain.auto;
+package art840.frc2020.commands.drivetrain.auto;
 
 import art840.frc2020.Robot;
 import edu.wpi.first.wpilibj.Timer;

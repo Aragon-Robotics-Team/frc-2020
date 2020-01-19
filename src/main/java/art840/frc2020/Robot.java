@@ -1,6 +1,6 @@
 package art840.frc2020;
 
-import art840.commands.drivetrain.auto.FollowTrajectory;
+import art840.frc2020.commands.drivetrain.auto.FollowTrajectory;
 import art840.frc2020.map.Map;
 import art840.frc2020.oi.Joystick;
 import art840.frc2020.subsystems.Drivetrain;
