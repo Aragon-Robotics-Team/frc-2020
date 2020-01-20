@@ -26,7 +26,8 @@ public class TestMap extends Map {
                 wheelCircumference = Units.inchesToMeters(6.0 * Math.PI);
                 trackWidth = Units.inchesToMeters(24.0);
 
-                feedforward = new SimpleMotorFeedforward(1.45, 2.41, 0.885);
+                feedforwardLeft = new SimpleMotorFeedforward(1.45, 2.41, 0.885);
+                feedforwardRight = new SimpleMotorFeedforward(1.45, 2.41, 0.885);
                 // velocityPID.kP = 0.2;
 
                 maxVelocity = 3; // m/s

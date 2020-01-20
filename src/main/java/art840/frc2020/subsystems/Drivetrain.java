@@ -9,6 +9,7 @@ import com.revrobotics.CANEncoder;
 import com.revrobotics.CANPIDController;
 import com.revrobotics.CANPIDController.ArbFFUnits;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.ControlType;
 import com.revrobotics.EncoderType;
@@ -57,7 +58,8 @@ public final class Drivetrain extends SubsystemBase {
         public double trackWidth = 1; // meters
 
         // Controller
-        public SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(0, 1);
+        public SimpleMotorFeedforward feedforwardLeft = new SimpleMotorFeedforward(0, 1);
+        public SimpleMotorFeedforward feedforwardRight = new SimpleMotorFeedforward(0, 1);
         public SlotConfiguration velocityPID = new SlotConfiguration();
 
         // Director
@@ -176,13 +178,15 @@ public final class Drivetrain extends SubsystemBase {
         final CANPIDController leftPID;
         final CANPIDController rightPID;
 
-        final SimpleMotorFeedforward feedforward; // TODO: separate left/right ff?
+        final SimpleMotorFeedforward feedforwardLeft;
+        final SimpleMotorFeedforward feedforwardRight;
 
         private Controller() {
             leftPID = motors.leftMotor.getPIDController();
             rightPID = motors.rightMotor.getPIDController();
 
-            feedforward = config.feedforward;
+            feedforwardLeft = config.feedforwardLeft;
+            feedforwardRight = config.feedforwardRight;
 
             SparkMaxFactory.copyPID(leftPID, config.velocityPID); // TODO: separate left/right pid?
             SparkMaxFactory.copyPID(rightPID, config.velocityPID);
@@ -202,8 +206,8 @@ public final class Drivetrain extends SubsystemBase {
         }
 
         private final Tuple calcVoltage(Tuple vel, Tuple accel) {
-            return tempVoltage.set(feedforward.calculate(vel.left, accel.left),
-                    feedforward.calculate(vel.right, accel.right));
+            return tempVoltage.set(feedforwardLeft.calculate(vel.left, accel.left),
+                    feedforwardRight.calculate(vel.right, accel.right));
         }
 
         private final Tuple calcVoltage(Tuple vel) {
@@ -394,8 +398,8 @@ public final class Drivetrain extends SubsystemBase {
             };
         }
 
-        public final Trajectory loadTestPath() {
-            Path path = Filesystem.getDeployDirectory().toPath().resolve("Test.wpilib.json");
+        public final Trajectory loadPath(String name) {
+            Path path = Filesystem.getDeployDirectory().toPath().resolve(name + ".wpilib.json");
             try {
                 return TrajectoryUtil.fromPathweaverJson(path);
             } catch (IOException e) {
@@ -429,8 +433,18 @@ public final class Drivetrain extends SubsystemBase {
         tab.addNumber("Right Vel", () -> odometry.vel.right).withWidget(BuiltInWidgets.kGraph)
                 .withProperties(Map.of("Visible time", 5));
 
-        // tab.addNumber("Pose X", () -> odometry.pose.getTranslation().getX());
-        // tab.addNumber("Pose Y", () -> odometry.pose.getTranslation().getY());
-        // tab.addNumber("Rotation", () -> odometry.pose.getRotation().getDegrees());
+        tab.addNumber("Pose X", () -> odometry.pose.getTranslation().getX());
+        tab.addNumber("Pose Y", () -> odometry.pose.getTranslation().getY());
+        tab.addNumber("Rotation", () -> odometry.pose.getRotation().getDegrees());
+    }
+
+    public void setBrake(boolean brake) {
+        System.out.println("Brake: " + brake);
+        var mode = brake ? IdleMode.kBrake : IdleMode.kCoast;
+
+        motors.leftMotor.setIdleMode(mode);
+        // motors.leftMotorSlave.setIdleMode(mode);
+        motors.rightMotor.setIdleMode(mode);
+        // motors.rightMotorSlave.setIdleMode(mode);
     }
 }

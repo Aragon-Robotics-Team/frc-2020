@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 
 public class FollowTrajectory extends CommandBase {
     private final Timer timer = new Timer();
-    private final Trajectory trajectory;
+    private Trajectory trajectory;
 
     public FollowTrajectory(Trajectory trajectory) {
         this.trajectory = trajectory;
@@ -16,7 +16,14 @@ public class FollowTrajectory extends CommandBase {
 
     @Override
     public void initialize() {
-        Robot.d.director.setSavedVel(trajectory.sample(0));
+        System.out.println("State0: " + trajectory.sample(0));
+        this.trajectory = trajectory.relativeTo(trajectory.sample(0).poseMeters);
+        
+        var state = trajectory.sample(0);
+        System.out.println("State1: " + state);
+
+        Robot.d.odometry.resetToPose(state.poseMeters);
+        Robot.d.director.setSavedVel(state);
 
         timer.reset();
         timer.start();
@@ -34,6 +41,6 @@ public class FollowTrajectory extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return timer.hasPeriodPassed(trajectory.getTotalTimeSeconds());
+        return timer.hasPeriodPassed(5 + trajectory.getTotalTimeSeconds());
     }
 }

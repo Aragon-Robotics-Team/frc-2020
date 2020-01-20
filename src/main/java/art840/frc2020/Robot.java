@@ -6,6 +6,8 @@ import art840.frc2020.oi.Joystick;
 import art840.frc2020.subsystems.Drivetrain;
 import art840.frc2020.util.NavX;
 import art840.frc2020.util.RobotBase;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class Robot extends RobotBase {
@@ -13,21 +15,48 @@ public class Robot extends RobotBase {
     public static Joystick j = Map.map.getJoystick();
     // ColorSensor c = ColorSensor.getInstance();
 
-    Command auto =
-            new FollowTrajectory(d.director.loadTestPath()).andThen(d.controller::driveZero, d);
+    SendableChooser<Command> c = new SendableChooser<Command>();
+
+    public void addAuto(String name) {
+        var command = (new FollowTrajectory(d.director.loadPath(name)))
+                .andThen(d.controller::driveZero, d);
+        c.addOption(name, command);
+    }
+
+    @Override
+    public void robotInit() {
+        // addAuto("Test");
+        // addAuto("ASDF");
+        addAuto("FWD");
+        // addAuto("LFWD");
+        // addAuto("RFWD");
+        Shuffleboard.getTab("Drivetrain").add(c);
+
+        NavX.ahrs.reset();
+        d.odometry.resetAll();
+    }
 
     @Override
     public void teleopInit() {
+        d.setBrake(true);
+
         d.odometry.resetAll();
 
         d.director.driveArcade().schedule();
     }
 
     @Override
-    public void autonomousInit() {
-        d.odometry.resetAll();
-        NavX.ahrs.reset();
+    public void disabledInit() {
+        d.setBrake(false);
+    }
 
-        auto.schedule();
+    @Override
+    public void autonomousInit() {
+        d.setBrake(true);
+
+        NavX.ahrs.reset();
+        d.odometry.resetAll();
+
+        (c.getSelected()).schedule();
     }
 }
