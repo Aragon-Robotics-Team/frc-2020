@@ -1,6 +1,7 @@
 package art840.frc2020.subsystems;
 
 import art840.frc2020.Robot;
+import art840.frc2020.util.FalconDashboard;
 import art840.frc2020.util.NavX;
 import art840.frc2020.util.SparkMaxFactory;
 import art840.frc2020.util.Tuple;
@@ -344,6 +345,8 @@ public final class Drivetrain extends SubsystemBase {
         }
 
         private final ChassisSpeeds getNextRamsete(Trajectory.State state) {
+            FalconDashboard.instance.updatePath(state);
+
             return ramsete.calculate(odometry.getPose(), state);
         }
 
@@ -422,6 +425,12 @@ public final class Drivetrain extends SubsystemBase {
         tab.addNumber("Pose X", () -> odometry.pose.getTranslation().getX());
         tab.addNumber("Pose Y", () -> odometry.pose.getTranslation().getY());
         tab.addNumber("Rotation", () -> odometry.pose.getRotation().getDegrees());
+
+        FalconDashboard.instance.reset();
+    }
+
+    public void periodic() {
+        FalconDashboard.instance.updatePath(odometry.getPose());
     }
 
     public void setBrake(boolean brake) {

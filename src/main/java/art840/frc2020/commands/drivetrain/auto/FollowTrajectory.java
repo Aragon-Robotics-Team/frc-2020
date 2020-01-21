@@ -1,6 +1,7 @@
 package art840.frc2020.commands.drivetrain.auto;
 
 import art840.frc2020.Robot;
+import art840.frc2020.util.FalconDashboard;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -16,6 +17,8 @@ public class FollowTrajectory extends CommandBase {
 
     @Override
     public void initialize() {
+        FalconDashboard.instance.hide();
+
         System.out.println("State0: " + trajectory.sample(0));
         this.trajectory = trajectory.relativeTo(trajectory.sample(0).poseMeters);
 
@@ -31,6 +34,7 @@ public class FollowTrajectory extends CommandBase {
 
     @Override
     public void execute() {
+        FalconDashboard.instance.show(); // TODO: only on first run?
         Robot.d.auto.driveRamsete(trajectory.sample(timer.get()));
     }
 
