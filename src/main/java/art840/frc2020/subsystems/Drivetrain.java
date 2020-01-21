@@ -13,7 +13,6 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.ControlType;
 import com.revrobotics.EncoderType;
-import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.controller.RamseteController;
@@ -27,12 +26,9 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
-import edu.wpi.first.wpilibj.trajectory.TrajectoryUtil;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import java.io.IOException;
-import java.nio.file.Path;
 import java.util.Map;
 
 public final class Drivetrain extends SubsystemBase {
@@ -338,10 +334,8 @@ public final class Drivetrain extends SubsystemBase {
         }
     }
 
-    public final class Director {
+    public final class Auto {
         RamseteController ramsete = new RamseteController();
-
-        // Autonomous
 
         public final void setSavedVel(Trajectory.State state) {
             controller.savedVel.set(odometry.kinematics
@@ -360,9 +354,9 @@ public final class Drivetrain extends SubsystemBase {
         public final void driveRamsete(Trajectory.State state) {
             controller.driveChassis(getNextRamsete(state));
         }
+    }
 
-        // Teleop
-
+    public final class Teleop {
         /**
          * speeds.left is throttle -1 to 1; speeds.right is rotation -1 to 1 Inverts throttle
          * because chassisspeeds +rotation is CCW
@@ -397,30 +391,22 @@ public final class Drivetrain extends SubsystemBase {
                 }
             };
         }
-
-        public final Trajectory loadPath(String name) {
-            Path path = Filesystem.getDeployDirectory().toPath().resolve(name + ".wpilib.json");
-            try {
-                return TrajectoryUtil.fromPathweaverJson(path);
-            } catch (IOException e) {
-                e.printStackTrace();
-                return null; // bruh
-            }
-        }
     }
 
     final Config config;
     final Motors motors;
     public final Odometry odometry;
     public final Controller controller;
-    public final Director director;
+    public final Auto auto;
+    public final Teleop teleop;
 
     public Drivetrain(final Config _config) {
         config = _config;
         motors = new Motors();
         odometry = new Odometry();
         controller = new Controller();
-        director = new Director();
+        auto = new Auto();
+        teleop = new Teleop();
 
         var tab = Shuffleboard.getTab("Drivetrain");
         // tab.addNumber("Left Pos", () -> odometry.pos.left).withWidget(BuiltInWidgets.kGraph)

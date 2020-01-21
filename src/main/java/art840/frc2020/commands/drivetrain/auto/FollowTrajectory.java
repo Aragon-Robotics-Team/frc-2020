@@ -18,12 +18,12 @@ public class FollowTrajectory extends CommandBase {
     public void initialize() {
         System.out.println("State0: " + trajectory.sample(0));
         this.trajectory = trajectory.relativeTo(trajectory.sample(0).poseMeters);
-        
+
         var state = trajectory.sample(0);
         System.out.println("State1: " + state);
 
         Robot.d.odometry.resetToPose(state.poseMeters);
-        Robot.d.director.setSavedVel(state);
+        Robot.d.auto.setSavedVel(state);
 
         timer.reset();
         timer.start();
@@ -31,7 +31,7 @@ public class FollowTrajectory extends CommandBase {
 
     @Override
     public void execute() {
-        Robot.d.director.driveRamsete(trajectory.sample(timer.get()));
+        Robot.d.auto.driveRamsete(trajectory.sample(timer.get()));
     }
 
     @Override

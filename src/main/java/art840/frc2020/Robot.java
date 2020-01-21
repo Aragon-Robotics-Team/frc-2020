@@ -6,6 +6,7 @@ import art840.frc2020.oi.Joystick;
 import art840.frc2020.subsystems.Drivetrain;
 import art840.frc2020.util.NavX;
 import art840.frc2020.util.RobotBase;
+import art840.frc2020.util.TrajectoryUtil;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -13,12 +14,15 @@ import edu.wpi.first.wpilibj2.command.Command;
 public class Robot extends RobotBase {
     public static Drivetrain d = new Drivetrain(Map.map.getDrivetrainConfig());
     public static Joystick j = Map.map.getJoystick();
+
+    // SplineHelper.getCubicControlVectorsFromWaypoints
+
     // ColorSensor c = ColorSensor.getInstance();
 
     SendableChooser<Command> c = new SendableChooser<Command>();
 
     public void addAuto(String name) {
-        var command = (new FollowTrajectory(d.director.loadPath(name)))
+        var command = (new FollowTrajectory(TrajectoryUtil.loadGeneratedPath(name)))
                 .andThen(d.controller::driveZero, d);
         c.addOption(name, command);
     }
@@ -42,7 +46,7 @@ public class Robot extends RobotBase {
 
         d.odometry.resetAll();
 
-        d.director.driveArcade().schedule();
+        d.teleop.driveArcade().schedule();
     }
 
     @Override
