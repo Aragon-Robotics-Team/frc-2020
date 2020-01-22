@@ -15,6 +15,7 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.ControlType;
 import com.revrobotics.EncoderType;
 import edu.wpi.first.wpilibj.Notifier;
+import edu.wpi.first.wpilibj.SlewRateLimiter;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.controller.RamseteController;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
@@ -63,6 +64,8 @@ public final class Drivetrain extends SubsystemBase {
         public double maxVelocity;
         public double maxAcceleration;
         public double maxRotation;
+
+        public double teleopSlew = 10; // max change / sec; no limit = inf
     }
 
     private final class Motors {
@@ -360,13 +363,27 @@ public final class Drivetrain extends SubsystemBase {
     }
 
     public final class Teleop {
+        SlewRateLimiter throttleSlew;
+        SlewRateLimiter rotationSlew;
+
+        private Teleop() {
+            throttleSlew = new SlewRateLimiter(config.teleopSlew);
+            rotationSlew = new SlewRateLimiter(config.teleopSlew);
+        }
+
         /**
-         * speeds.left is throttle -1 to 1; speeds.right is rotation -1 to 1 Inverts throttle
+         * speeds.left is throttle -1 to 1; speeds.right is rotation -1 to 1 Inverts rotation
          * because chassisspeeds +rotation is CCW
          */
         private final ChassisSpeeds convertJoystickToSpeeds(Tuple speeds) {
-            return new ChassisSpeeds(speeds.left * config.maxVelocity, 0,
-                    -1 * speeds.right * config.maxRotation);
+            return new ChassisSpeeds(throttleSlew.calculate(speeds.left) * config.maxVelocity, 0,
+                    -1 * rotationSlew.calculate(speeds.right) * config.maxRotation);
+        }
+
+        public final void reset() {
+            // Should be called before and after each drive teleop command
+            throttleSlew.reset(0);
+            rotationSlew.reset(0);
         }
 
         public final void driveArcadeFF(Tuple speeds) {
@@ -383,6 +400,7 @@ public final class Drivetrain extends SubsystemBase {
 
                 public void initialize() {
                     controller.driveZero();
+                    reset();
                 }
 
                 public void execute() {
@@ -391,6 +409,7 @@ public final class Drivetrain extends SubsystemBase {
 
                 public void end(boolean i) {
                     controller.driveZero();
+                    reset();
                 }
             };
         }
@@ -438,8 +457,8 @@ public final class Drivetrain extends SubsystemBase {
         var mode = brake ? IdleMode.kBrake : IdleMode.kCoast;
 
         motors.leftMotor.setIdleMode(mode);
-        // motors.leftMotorSlave.setIdleMode(mode);
+        motors.leftMotorSlave.setIdleMode(mode);
         motors.rightMotor.setIdleMode(mode);
-        // motors.rightMotorSlave.setIdleMode(mode);
+        motors.rightMotorSlave.setIdleMode(mode);
     }
 }
