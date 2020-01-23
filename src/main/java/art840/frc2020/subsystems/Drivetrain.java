@@ -65,7 +65,8 @@ public final class Drivetrain extends SubsystemBase {
         public double maxAcceleration;
         public double maxRotation;
 
-        public double teleopSlew = 10; // max change / sec; no limit = inf
+        public double teleopLinearSlew = 10; // max m / sec ^ 2; no limit = inf
+        public double teleopRotationalSlew = 10; // rad / sec ^ 2
     }
 
     private final class Motors {
@@ -199,6 +200,7 @@ public final class Drivetrain extends SubsystemBase {
             var dt = time - lastTime;
 
             tempAccel.set((vel.left - savedVel.left) / dt, (vel.right - savedVel.right) / dt);
+            // System.out.println("Accel: " + tempAccel);
 
             lastTime = time;
 
@@ -261,7 +263,7 @@ public final class Drivetrain extends SubsystemBase {
 
         public final void driveVoltage(Tuple voltage) {
             savedVel.set(odometry.vel);
-            System.out.println(voltage.left + " " + voltage.right);
+            // System.out.println(voltage.left + " " + voltage.right);
             _driveVoltage(voltage);
         }
 
@@ -275,21 +277,20 @@ public final class Drivetrain extends SubsystemBase {
         }
 
         public final void driveVelocityFF(Tuple vel, Tuple accel) {
-            savedVel.set(vel);
             _driveVelocityFF(vel, accel);
+            savedVel.set(vel);
         }
 
         public final void driveVelocityFF(Tuple vel) {
-            savedVel.set(vel);
+            // SmartDashboard.putString("Control Type", "Velocity FF");
+            // SmartDashboard.putNumber("Want Vel Left", vel.left);
+            // SmartDashboard.putNumber("Want Vel Right", vel.right);
 
-            SmartDashboard.putString("Control Type", "Velocity FF");
-            SmartDashboard.putNumber("Want Vel Left", vel.left);
-            SmartDashboard.putNumber("Want Vel Right", vel.right);
-
-            SmartDashboard.putNumber("Error Vel Left", vel.left - odometry.vel.left);
-            SmartDashboard.putNumber("Error Vel Right", vel.right - odometry.vel.right);
+            // SmartDashboard.putNumber("Error Vel Left", vel.left - odometry.vel.left);
+            // SmartDashboard.putNumber("Error Vel Right", vel.right - odometry.vel.right);
 
             _driveVelocityFF(vel);
+            savedVel.set(vel);
         }
 
         public final void driveVelocityFF(DifferentialDriveWheelSpeeds speeds) {
@@ -311,8 +312,6 @@ public final class Drivetrain extends SubsystemBase {
         }
 
         public final void driveVelocity(Tuple vel) {
-            savedVel.set(vel);
-
             SmartDashboard.putString("Control Type", "Velocity FF + PID");
             SmartDashboard.putNumber("Want Vel Left", vel.left);
             SmartDashboard.putNumber("Want Vel Right", vel.right);
@@ -321,11 +320,12 @@ public final class Drivetrain extends SubsystemBase {
             SmartDashboard.putNumber("Error Vel Right", vel.right - odometry.vel.right);
 
             _driveVelocity(vel);
+            savedVel.set(vel);
         }
 
         public final void driveVelocity(Tuple vel, Tuple accel) {
-            savedVel.set(vel);
             _driveVelocity(vel, accel);
+            savedVel.set(vel);
         }
 
         public final void driveVelocity(DifferentialDriveWheelSpeeds speeds) {
@@ -367,8 +367,8 @@ public final class Drivetrain extends SubsystemBase {
         SlewRateLimiter rotationSlew;
 
         private Teleop() {
-            throttleSlew = new SlewRateLimiter(config.teleopSlew);
-            rotationSlew = new SlewRateLimiter(config.teleopSlew);
+            throttleSlew = new SlewRateLimiter(config.teleopLinearSlew);
+            rotationSlew = new SlewRateLimiter(config.teleopRotationalSlew);
         }
 
         /**
@@ -376,8 +376,10 @@ public final class Drivetrain extends SubsystemBase {
          * because chassisspeeds +rotation is CCW
          */
         private final ChassisSpeeds convertJoystickToSpeeds(Tuple speeds) {
-            return new ChassisSpeeds(throttleSlew.calculate(speeds.left) * config.maxVelocity, 0,
-                    -1 * rotationSlew.calculate(speeds.right) * config.maxRotation);
+            // System.out.println(speeds);
+
+            return new ChassisSpeeds(throttleSlew.calculate(speeds.left * config.maxVelocity), 0,
+                    rotationSlew.calculate(-1 * speeds.right * config.maxRotation));
         }
 
         public final void reset() {
@@ -404,7 +406,7 @@ public final class Drivetrain extends SubsystemBase {
                 }
 
                 public void execute() {
-                    driveArcade(tmp.set(Robot.j.getThrottle(), Robot.j.getTurn()));
+                    driveArcadeFF(tmp.set(Robot.j.getThrottle(), Robot.j.getTurn()));
                 }
 
                 public void end(boolean i) {
@@ -441,9 +443,19 @@ public final class Drivetrain extends SubsystemBase {
         tab.addNumber("Right Vel", () -> odometry.vel.right).withWidget(BuiltInWidgets.kGraph)
                 .withProperties(Map.of("Visible time", 5));
 
-        tab.addNumber("Pose X", () -> odometry.pose.getTranslation().getX());
-        tab.addNumber("Pose Y", () -> odometry.pose.getTranslation().getY());
-        tab.addNumber("Rotation", () -> odometry.pose.getRotation().getDegrees());
+        tab.addNumber("Left Error", () -> controller.savedVel.left - odometry.vel.left)
+                .withWidget(BuiltInWidgets.kGraph).withProperties(Map.of("Visible time", 5));
+        tab.addNumber("Right Error", () -> controller.savedVel.right - odometry.vel.right)
+                .withWidget(BuiltInWidgets.kGraph).withProperties(Map.of("Visible time", 5));
+
+        tab.addNumber("Left Want", () -> controller.savedVel.left).withWidget(BuiltInWidgets.kGraph)
+                .withProperties(Map.of("Visible time", 5));
+        tab.addNumber("Right Want", () -> controller.savedVel.right)
+                .withWidget(BuiltInWidgets.kGraph).withProperties(Map.of("Visible time", 5));
+
+        // tab.addNumber("Pose X", () -> odometry.pose.getTranslation().getX());
+        // tab.addNumber("Pose Y", () -> odometry.pose.getTranslation().getY());
+        // tab.addNumber("Rotation", () -> odometry.pose.getRotation().getDegrees());
 
         FalconDashboard.instance.reset();
     }

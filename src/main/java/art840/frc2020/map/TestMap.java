@@ -14,8 +14,8 @@ public class TestMap extends Map {
                 leftMotor = 2;
                 rightMotor = 5;
 
-                leftMotorSlave = -1;
-                rightMotorSlave = -1;
+                leftMotorSlave = 1;
+                rightMotorSlave = 3;
 
                 invertAll = true;
 
@@ -26,12 +26,16 @@ public class TestMap extends Map {
                 wheelCircumference = Units.inchesToMeters(6.0 * Math.PI);
                 trackWidth = Units.inchesToMeters(24.0);
 
-                feedforwardLeft = new SimpleMotorFeedforward(1.45, 2.41, 0.885);
-                feedforwardRight = new SimpleMotorFeedforward(1.45, 2.41, 0.885);
+                // feedforwardCombined = new SimpleMotorFeedforward(0.87, 2.29, 0.617);
+                feedforwardLeft = new SimpleMotorFeedforward(0.857, 2.3, 0.611);
+                feedforwardRight = new SimpleMotorFeedforward(0.883, 2.28, 0.622);
                 // velocityPID.kP = 0.2;
 
                 maxVelocity = 3; // m/s
                 maxRotation = 2 * Math.PI; // rad/s
+
+                teleopLinearSlew = 3;
+                teleopRotationalSlew = 3;
             }
         };
     }

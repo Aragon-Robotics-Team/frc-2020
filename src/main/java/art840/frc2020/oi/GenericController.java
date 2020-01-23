@@ -31,7 +31,7 @@ public class GenericController extends Joystick {
     }
 
     private static final double applyDeadband(double val) {
-        final double deadband = 0.05;
+        final double deadband = 0.07;
 
         if (Math.abs(val) < deadband) {
             return 0;
