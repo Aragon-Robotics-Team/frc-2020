@@ -24,6 +24,7 @@ public class SparkMaxFactory {
             spark = Mock.mock(CANSparkMax.class);
         }
 
+        spark.restoreFactoryDefaults();
         spark.clearFaults();
         spark.setIdleMode(IdleMode.kBrake);
         spark.enableVoltageCompensation(voltageCompensation);

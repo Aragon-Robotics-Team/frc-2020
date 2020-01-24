@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import java.io.IOException;
 import java.nio.file.Path;
 
-public final class TrajectoryUtil {
+public class TrajectoryUtil {
     private TrajectoryUtil() {}
 
     public static final Path deployPath = Filesystem.getDeployDirectory().toPath();

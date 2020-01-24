@@ -1,5 +1,7 @@
 package art840.frc2020.subsystems;
 
+import static java.util.Objects.requireNonNull;
+
 import art840.frc2020.Robot;
 import art840.frc2020.util.FalconDashboard;
 import art840.frc2020.util.NavX;
@@ -67,6 +69,13 @@ public final class Drivetrain extends SubsystemBase {
 
         public double teleopLinearSlew = 10; // max m / sec ^ 2; no limit = inf
         public double teleopRotationalSlew = 10; // rad / sec ^ 2
+
+        private final void verify() {
+            requireNonNull(motorType);
+            requireNonNull(feedforwardLeft);
+            requireNonNull(feedforwardRight);
+            requireNonNull(velocityPID);
+        }
     }
 
     private final class Motors {
@@ -426,6 +435,8 @@ public final class Drivetrain extends SubsystemBase {
 
     public Drivetrain(final Config _config) {
         config = _config;
+        config.verify();
+
         motors = new Motors();
         odometry = new Odometry();
         controller = new Controller();
