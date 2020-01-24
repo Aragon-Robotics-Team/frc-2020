@@ -35,8 +35,10 @@ public class GenericController extends Joystick {
 
         if (Math.abs(val) < deadband) {
             return 0;
+        } else if (val < 0) {
+            return (val + deadband) / (1 - deadband);
         } else {
-            return val;
+            return (val - deadband) / (1 - deadband);
         }
     }
 
