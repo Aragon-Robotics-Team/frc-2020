@@ -1,6 +1,8 @@
 package art840.frc2020.oi;
 
-// TODO: finish
+import art840.frc2020.Robot;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
+
 public class GenericController extends Joystick {
     // XBox controller, F310 controller, etc
 
@@ -62,5 +64,9 @@ public class GenericController extends Joystick {
         return isPressed(Button.A);
     }
 
-    protected final void setup() {}
+    protected final void setup() {
+        getButton(Button.B).whenActive(() -> Robot.lift.sol.set(DoubleSolenoid.Value.kOff));
+        getButton(Button.X).whenActive(() -> Robot.lift.sol.set(DoubleSolenoid.Value.kForward));
+        getButton(Button.Y).whenActive(() -> Robot.lift.sol.set(DoubleSolenoid.Value.kReverse));
+    }
 }

@@ -3,6 +3,7 @@ package art840.frc2020.map;
 import art840.frc2020.oi.GenericController;
 import art840.frc2020.oi.Joystick;
 import art840.frc2020.subsystems.Drivetrain;
+import art840.frc2020.subsystems.Lift;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.util.Units;
@@ -42,5 +43,18 @@ public class TestMap extends Map {
 
     public Joystick getJoystick() {
         return new GenericController(0);
+    }
+
+    public int getPCMId() {
+        return 1;
+    }
+
+    public Lift.Config getLiftConfig() {
+        return new Lift.Config() {
+            {
+                solenoidFwd = 1;
+                solenoidRev = 0;
+            }
+        };
     }
 }
