@@ -20,7 +20,7 @@ public class FollowTrajectory extends CommandBase {
         FalconDashboard.instance.hide();
 
         System.out.println("State0: " + trajectory.sample(0));
-        this.trajectory = trajectory.relativeTo(trajectory.sample(0).poseMeters);
+        // this.trajectory = trajectory.relativeTo(trajectory.sample(0).poseMeters);
 
         var state = trajectory.sample(0);
         System.out.println("State1: " + state);

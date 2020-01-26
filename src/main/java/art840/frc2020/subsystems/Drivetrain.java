@@ -6,6 +6,7 @@ import art840.frc2020.Robot;
 import art840.frc2020.util.FalconDashboard;
 import art840.frc2020.util.NavX;
 import art840.frc2020.util.SparkMaxFactory;
+import art840.frc2020.util.TrajectoryConfigGen;
 import art840.frc2020.util.Tuple;
 import com.ctre.phoenix.motorcontrol.can.SlotConfiguration;
 import com.revrobotics.CANEncoder;
@@ -22,6 +23,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.controller.RamseteController;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
+import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
@@ -151,7 +153,7 @@ public final class Drivetrain extends SubsystemBase {
         }
 
         public final void resetAll() {
-            resetToPose(new Pose2d());
+            resetToPose(new Pose2d(8.5, -4.5, new Rotation2d()));
             vel.clear();
             pos.clear();
         }
@@ -415,7 +417,7 @@ public final class Drivetrain extends SubsystemBase {
                 }
 
                 public void execute() {
-                    driveArcadeFF(tmp.set(Robot.j.getThrottle(), Robot.j.getTurn()));
+                    driveArcade(tmp.set(Robot.j.getThrottle(), Robot.j.getTurn()));
                 }
 
                 public void end(boolean i) {
@@ -432,6 +434,8 @@ public final class Drivetrain extends SubsystemBase {
     public final Controller controller;
     public final Auto auto;
     public final Teleop teleop;
+
+    public final TrajectoryConfigGen configGen;
 
     public Drivetrain(final Config _config) {
         config = _config;
@@ -450,29 +454,53 @@ public final class Drivetrain extends SubsystemBase {
         // .withProperties(Map.of("Visible time", 5));
 
         tab.addNumber("Left Vel", () -> odometry.vel.left).withWidget(BuiltInWidgets.kGraph)
-                .withProperties(Map.of("Visible time", 5));
+                .withProperties(Map.of("Visible time", 5, "Automatics bounds", false, "Upper bound",
+                        1, "Lower bound", -1))
+                .withSize(3, 2).withPosition(0, 0);
         tab.addNumber("Right Vel", () -> odometry.vel.right).withWidget(BuiltInWidgets.kGraph)
-                .withProperties(Map.of("Visible time", 5));
+                .withProperties(Map.of("Visible time", 5, "Automatics bounds", false, "Upper bound",
+                        1, "Lower bound", -1))
+                .withSize(3, 2).withPosition(0, 2);
 
         tab.addNumber("Left Error", () -> controller.savedVel.left - odometry.vel.left)
-                .withWidget(BuiltInWidgets.kGraph).withProperties(Map.of("Visible time", 5));
+                .withWidget(BuiltInWidgets.kGraph).withProperties(Map.of("Visible time", 5,
+                        "Automatics bounds", false, "Upper bound", 1, "Lower bound", -1))
+                .withSize(3, 2).withPosition(3, 0);
         tab.addNumber("Right Error", () -> controller.savedVel.right - odometry.vel.right)
-                .withWidget(BuiltInWidgets.kGraph).withProperties(Map.of("Visible time", 5));
+                .withWidget(BuiltInWidgets.kGraph).withProperties(Map.of("Visible time", 5,
+                        "Automatics bounds", false, "Upper bound", 1, "Lower bound", -1))
+                .withSize(3, 2).withPosition(3, 2);
 
         tab.addNumber("Left Want", () -> controller.savedVel.left).withWidget(BuiltInWidgets.kGraph)
-                .withProperties(Map.of("Visible time", 5));
+                .withProperties(Map.of("Visible time", 5, "Automatics bounds", false, "Upper bound",
+                        1, "Lower bound", -1))
+                .withSize(3, 2).withPosition(6, 0);
         tab.addNumber("Right Want", () -> controller.savedVel.right)
-                .withWidget(BuiltInWidgets.kGraph).withProperties(Map.of("Visible time", 5));
+                .withWidget(BuiltInWidgets.kGraph).withProperties(Map.of("Visible time", 5,
+                        "Automatics bounds", false, "Upper bound", 1, "Lower bound", -1))
+                .withSize(3, 2).withPosition(6, 2);
 
         // tab.addNumber("Pose X", () -> odometry.pose.getTranslation().getX());
         // tab.addNumber("Pose Y", () -> odometry.pose.getTranslation().getY());
         // tab.addNumber("Rotation", () -> odometry.pose.getRotation().getDegrees());
 
         FalconDashboard.instance.reset();
+
+        configGen = new TrajectoryConfigGen(new TrajectoryConfigGen.Config() {
+            {
+                maxVelocity = config.maxVelocity;
+                maxAcceleration = config.maxAcceleration;
+                maxVoltage = 10;
+
+                feedforward = config.feedforwardLeft;
+                feedforward2 = config.feedforwardRight;
+                kinematics = odometry.kinematics;
+            }
+        });
     }
 
     public void periodic() {
-        FalconDashboard.instance.updatePath(odometry.getPose());
+        FalconDashboard.instance.updateRobot(odometry.getPose());
     }
 
     public void setBrake(boolean brake) {

@@ -30,13 +30,14 @@ public class TestMap extends Map {
                 // feedforwardCombined = new SimpleMotorFeedforward(0.87, 2.29, 0.617);
                 feedforwardLeft = new SimpleMotorFeedforward(0.857, 2.3, 0.611);
                 feedforwardRight = new SimpleMotorFeedforward(0.883, 2.28, 0.622);
-                // velocityPID.kP = 0.2;
+                velocityPID.kP = 0.1;
 
                 maxVelocity = 3; // m/s
                 maxRotation = 2 * Math.PI; // rad/s
+                maxAcceleration = 6;
 
-                teleopLinearSlew = 3;
-                teleopRotationalSlew = 3;
+                teleopLinearSlew = 6;
+                teleopRotationalSlew = 4 * Math.PI;
             }
         };
     }

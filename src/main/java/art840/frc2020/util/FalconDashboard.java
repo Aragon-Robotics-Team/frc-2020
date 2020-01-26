@@ -50,7 +50,7 @@ public class FalconDashboard {
         var translation = pose.getTranslation();
 
         pos.left = Units.metersToFeet(translation.getX());
-        pos.right = Units.metersToFeet(27 - translation.getY());
+        pos.right = 27 + Units.metersToFeet(translation.getY());
     }
 
     public void updateRobot(Pose2d pose) {

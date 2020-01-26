@@ -13,15 +13,15 @@ import java.util.List;
 
 public class TrajectoryConfigGen {
     public static class Config {
-        double maxVelocity;
-        double maxAcceleration;
-        double maxVoltage;
+        public double maxVelocity;
+        public double maxAcceleration;
+        public double maxVoltage;
 
-        SimpleMotorFeedforward feedforward;
-        SimpleMotorFeedforward feedforward2;
-        DifferentialDriveKinematics kinematics;
+        public SimpleMotorFeedforward feedforward;
+        public SimpleMotorFeedforward feedforward2;
+        public DifferentialDriveKinematics kinematics;
 
-        List<TrajectoryConstraint> constraints = new ArrayList<>();
+        public List<TrajectoryConstraint> constraints = new ArrayList<>();
 
         private final void verify() {
             requireNonNull(kinematics);

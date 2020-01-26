@@ -1,7 +1,8 @@
 package art840.frc2020.oi;
 
-import art840.frc2020.Robot;
-import edu.wpi.first.wpilibj.DoubleSolenoid;
+import art840.frc2020.util.FalconDashboard;
+import art840.frc2020.util.InstantCommandDisabled;
+import art840.frc2020.util.ScalingUtils;
 
 public class GenericController extends Joystick {
     // XBox controller, F310 controller, etc
@@ -32,24 +33,16 @@ public class GenericController extends Joystick {
         super(port);
     }
 
-    private static final double applyDeadband(double val) {
-        final double deadband = 0.07;
-
-        if (Math.abs(val) < deadband) {
-            return 0;
-        } else if (val < 0) {
-            return (val + deadband) / (1 - deadband);
-        } else {
-            return (val - deadband) / (1 - deadband);
-        }
+    static final double scale(double val) {
+        return ScalingUtils.square(ScalingUtils.applyDeadband(val, 0.07));
     }
 
     public final double getThrottle() {
-        return applyDeadband(-getAxis(Axis.LY));
+        return scale(-getAxis(Axis.LY));
     }
 
     public final double getTurn() {
-        return applyDeadband(getAxis(Axis.RX));
+        return scale(getAxis(Axis.RX));
     }
 
     public final double getThrottle2() {
@@ -65,8 +58,11 @@ public class GenericController extends Joystick {
     }
 
     protected final void setup() {
-        getButton(Button.B).whenActive(() -> Robot.lift.sol.set(DoubleSolenoid.Value.kOff));
-        getButton(Button.X).whenActive(() -> Robot.lift.sol.set(DoubleSolenoid.Value.kForward));
-        getButton(Button.Y).whenActive(() -> Robot.lift.sol.set(DoubleSolenoid.Value.kReverse));
+        // getButton(Button.B).whenActive(() -> Robot.lift.sol.set(DoubleSolenoid.Value.kOff));
+        // getButton(Button.X).whenActive(() -> Robot.lift.sol.set(DoubleSolenoid.Value.kForward));
+        // getButton(Button.Y).whenActive(() -> Robot.lift.sol.set(DoubleSolenoid.Value.kReverse));
+
+        getButton(Button.X).whenActive(new InstantCommandDisabled(FalconDashboard.instance::show));
+        getButton(Button.Y).whenActive(new InstantCommandDisabled(FalconDashboard.instance::hide));
     }
 }
