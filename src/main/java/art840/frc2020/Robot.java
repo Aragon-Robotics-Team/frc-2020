@@ -9,6 +9,7 @@ import art840.frc2020.util.InstantCommandDisabled;
 import art840.frc2020.util.NavX;
 import art840.frc2020.util.RobotBase;
 import art840.frc2020.util.TrajectoryUtil;
+import art840.frc2020.util.Tuple;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
@@ -16,6 +17,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import java.util.List;
 
@@ -66,7 +68,12 @@ public class Robot extends RobotBase {
         d.odometry.resetAll();
         d.controller.reset();
 
-        d.teleop.driveArcade().schedule();
+        d.teleop.driveArcade().beforeStarting(d.controller::driveZero).schedule();
+
+        // Tuple vel = new Tuple(3, 3);
+        // Tuple ff = new Tuple(7.5, 7.5);
+
+        // (new RunCommand((() -> d.controller._driveRawVelocity(vel, ff)), d)).schedule();
     }
 
     @Override
@@ -84,6 +91,9 @@ public class Robot extends RobotBase {
         d.odometry.resetAll();
 
         // (c.getSelected()).schedule();
-        autoCommand.schedule();
+        // autoCommand.schedule();
+        (new RunCommand((() -> d.controller._driveRawVelocity(Tuple.zero, Tuple.zero)), d))
+                .schedule();
+        // (new RunCommand((() -> d.controller._driveVoltage(Tuple.zero)), d)).schedule();
     }
 }

@@ -1,8 +1,8 @@
 package art840.frc2020.oi;
 
-import art840.frc2020.util.FalconDashboard;
-import art840.frc2020.util.InstantCommandDisabled;
+import art840.frc2020.Robot;
 import art840.frc2020.util.ScalingUtils;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 
 public class GenericController extends Joystick {
     // XBox controller, F310 controller, etc
@@ -58,11 +58,13 @@ public class GenericController extends Joystick {
     }
 
     protected final void setup() {
-        // getButton(Button.B).whenActive(() -> Robot.lift.sol.set(DoubleSolenoid.Value.kOff));
-        // getButton(Button.X).whenActive(() -> Robot.lift.sol.set(DoubleSolenoid.Value.kForward));
-        // getButton(Button.Y).whenActive(() -> Robot.lift.sol.set(DoubleSolenoid.Value.kReverse));
+        getButton(Button.B).whenActive(() -> Robot.lift.sol.set(DoubleSolenoid.Value.kOff));
+        getButton(Button.X).whenActive(() -> Robot.lift.sol.set(DoubleSolenoid.Value.kForward));
+        getButton(Button.Y).whenActive(() -> Robot.lift.sol.set(DoubleSolenoid.Value.kReverse));
 
-        getButton(Button.X).whenActive(new InstantCommandDisabled(FalconDashboard.instance::show));
-        getButton(Button.Y).whenActive(new InstantCommandDisabled(FalconDashboard.instance::hide));
+        // getButton(Button.X).whenActive(new
+        // InstantCommandDisabled(FalconDashboard.instance::show));
+        // getButton(Button.Y).whenActive(new
+        // InstantCommandDisabled(FalconDashboard.instance::hide));
     }
 }

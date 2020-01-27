@@ -17,6 +17,7 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.ControlType;
 import com.revrobotics.EncoderType;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.SlewRateLimiter;
 import edu.wpi.first.wpilibj.Timer;
@@ -211,7 +212,7 @@ public final class Drivetrain extends SubsystemBase {
             var dt = time - lastTime;
 
             tempAccel.set((vel.left - savedVel.left) / dt, (vel.right - savedVel.right) / dt);
-            // System.out.println("Accel: " + tempAccel);
+            System.out.println("Accel: " + tempAccel);
 
             lastTime = time;
 
@@ -228,10 +229,12 @@ public final class Drivetrain extends SubsystemBase {
         }
 
         private final Tuple calcVel(DifferentialDriveWheelSpeeds speeds) {
+            System.out.println(speeds);
             return tempVel.set(speeds);
         }
 
         private final Tuple calcVel(ChassisSpeeds speeds) {
+            System.out.println(speeds);
             return calcVel(odometry.kinematics.toWheelSpeeds(speeds));
         }
 
@@ -259,7 +262,8 @@ public final class Drivetrain extends SubsystemBase {
         }
 
         // // // // // 0
-        private final void _driveRawVelocity(Tuple vel, Tuple feedforward) {
+        public final void _driveRawVelocity(Tuple vel, Tuple feedforward) {
+            System.out.println("vel: " + vel + " ff: " + feedforward);
             leftPID.setReference(vel.left, ControlType.kVelocity, 0, feedforward.left,
                     ArbFFUnits.kVoltage);
             rightPID.setReference(vel.right, ControlType.kVelocity, 0, feedforward.right,
@@ -267,7 +271,7 @@ public final class Drivetrain extends SubsystemBase {
         }
 
         // // // // // 1
-        private final void _driveVoltage(Tuple voltage) {
+        public final void _driveVoltage(Tuple voltage) {
             leftPID.setReference(voltage.left, ControlType.kVoltage);
             rightPID.setReference(voltage.right, ControlType.kVoltage);
         }
@@ -387,7 +391,7 @@ public final class Drivetrain extends SubsystemBase {
          * because chassisspeeds +rotation is CCW
          */
         private final ChassisSpeeds convertJoystickToSpeeds(Tuple speeds) {
-            // System.out.println(speeds);
+            System.out.println(speeds);
 
             return new ChassisSpeeds(throttleSlew.calculate(speeds.left * config.maxVelocity), 0,
                     rotationSlew.calculate(-1 * speeds.right * config.maxRotation));
@@ -414,10 +418,13 @@ public final class Drivetrain extends SubsystemBase {
                 public void initialize() {
                     controller.driveZero();
                     reset();
+                    tmp.clear();
                 }
 
                 public void execute() {
                     driveArcade(tmp.set(Robot.j.getThrottle(), Robot.j.getTurn()));
+                    NetworkTableInstance.getDefault().flush();
+                    System.out.println("\n");
                 }
 
                 public void end(boolean i) {
@@ -501,6 +508,15 @@ public final class Drivetrain extends SubsystemBase {
 
     public void periodic() {
         FalconDashboard.instance.updateRobot(odometry.getPose());
+
+        SmartDashboard.putBoolean("Left Reset",
+                motors.leftMotor.getStickyFault(CANSparkMax.FaultID.kHasReset));
+        SmartDashboard.putBoolean("LeftS Reset",
+                motors.leftMotorSlave.getStickyFault(CANSparkMax.FaultID.kHasReset));
+        SmartDashboard.putBoolean("Right Reset",
+                motors.rightMotor.getStickyFault(CANSparkMax.FaultID.kHasReset));
+        SmartDashboard.putBoolean("RightS Reset",
+                motors.rightMotorSlave.getStickyFault(CANSparkMax.FaultID.kHasReset));
     }
 
     public void setBrake(boolean brake) {
