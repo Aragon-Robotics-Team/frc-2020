@@ -3,6 +3,7 @@ package art840.frc2020;
 import art840.frc2020.commands.drivetrain.auto.FollowTrajectory;
 import art840.frc2020.map.Map;
 import art840.frc2020.oi.Joystick;
+import art840.frc2020.subsystems.ColorSensor;
 import art840.frc2020.subsystems.Drivetrain;
 import art840.frc2020.subsystems.Lift;
 import art840.frc2020.subsystems.WheelSpinner;
@@ -28,7 +29,7 @@ public class Robot extends RobotBase {
     public static WheelSpinner wheelSpinner = new WheelSpinner(Map.map.getWheelSpinnerConfig());
     public static Joystick j = Map.map.getJoystick();
 
-    // ColorSensor c = ColorSensor.getInstance();
+    ColorSensor color = ColorSensor.getInstance();
 
     Command waitAndCoast =
             new WaitCommand(5).andThen(new InstantCommandDisabled(() -> d.setBrake(false)));

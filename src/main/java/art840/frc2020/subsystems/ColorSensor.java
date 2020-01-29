@@ -2,11 +2,17 @@ package art840.frc2020.subsystems;
 
 import art840.frc2020.util.ColorUtils;
 import art840.frc2020.util.ShuffleboardRGB;
+import com.revrobotics.ColorMatch;
+import com.revrobotics.ColorMatchResult;
 import com.revrobotics.ColorSensorV3;
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.Notifier;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardContainer;
+import edu.wpi.first.wpilibj.util.Color;
+import java.util.Map;
 
 public class ColorSensor {
     public final ColorSensorV3 color = new ColorSensorV3(I2C.Port.kOnboard);
@@ -16,15 +22,36 @@ public class ColorSensor {
 
     private static final ColorSensor instance = new ColorSensor();
 
-    public final ShuffleboardRGB widget =
-            new ShuffleboardRGB(Shuffleboard.getTab("Drivetrain"), "Color Sensor");
+    public final ShuffleboardContainer tab = Shuffleboard.getTab("Color");
+
+    public final ShuffleboardRGB widget = new ShuffleboardRGB(tab, "Color Sensor");
+    public final NetworkTableEntry hexString =
+            tab.add("Hex Color", "#000000").withWidget(BuiltInWidgets.kTextView).getEntry();
+    public final NetworkTableEntry floatColor =
+            tab.add("Float Color", "123").withWidget(BuiltInWidgets.kTextView).getEntry();
+    public final NetworkTableEntry detectedColor =
+            tab.add("Detected Color", "123").withWidget(BuiltInWidgets.kTextView).getEntry();
+    public final NetworkTableEntry confidence =
+            tab.add("Confidence", 123).withWidget(BuiltInWidgets.kTextView).getEntry();
+    public final NetworkTableEntry colorNumGraph =
+            tab.add("ColorNum", 0).withWidget(BuiltInWidgets.kGraph)
+                    .withProperties(Map.of("Visible time", 5.0)).getEntry();
 
     public static final ColorSensor getInstance() {
         return instance;
     }
 
+    private final ColorMatch m_colorMatcher = new ColorMatch();
+
+    private final Color kBlueTarget = ColorMatch.makeColor(0.0879, 0.3247, 0.5874);
+    private final Color kGreenTarget = ColorMatch.makeColor(0.2417, 0.5037, 0.2549);
+    private final Color kRedTarget = ColorMatch.makeColor(0.4924, 0.3650, 0.1426);
+
     private ColorSensor() {
         threadFast.startPeriodic(0.1);
+        m_colorMatcher.addColorMatch(kBlueTarget);
+        m_colorMatcher.addColorMatch(kGreenTarget);
+        m_colorMatcher.addColorMatch(kRedTarget);
         // threadSlow.startPeriodic(1);
     }
 
@@ -33,23 +60,49 @@ public class ColorSensor {
      */
 
     private final void periodicFast() {
-        // var c = color.getColor();
-        var c = ColorUtils.getBrightColor(color);
+        var c = color.getColor();
+        // var c = ColorUtils.getBrightColor(color);
         var s = ColorUtils.toHexString(c);
 
-        SmartDashboard.putString("Hex Color", s);
-        // SmartDashboard.putString("Float Color", ColorUtils.toFloatString(c));
+        hexString.setString(s);
         widget.setColor(s);
+        floatColor.setString(ColorUtils.toFloatString(c));
+        String colorString;
+        double colorNum;
+        ColorMatchResult match = m_colorMatcher.matchClosestColor(c);
+        if (match.color == kBlueTarget) {
+            colorString = "Blue";
+            colorNum = 1;
+        } else if (match.color == kRedTarget) {
+            colorString = "Red";
+            colorNum = 2;
+        } else if (match.color == kGreenTarget) {
+            colorString = "Green";
+            colorNum = 3;
+        } else {
+            colorString = "Unknown";
+            colorNum = 0;
+        }
+        colorNum += Math.random() * 0.05;
+        detectedColor.setString(colorString);
+        colorNumGraph.setDouble(colorNum);
+        confidence.setDouble(match.confidence);
 
-        var p = (double) color.getProximity();
-        p = (1.0 - (p / 255.0)) * 10.0;
-        SmartDashboard.putNumber("Distance", p);
-
-        // SmartDashboard.putNumber("Color/Red", c.red);
-        // SmartDashboard.putNumber("Color/Green", c.green);
-        // SmartDashboard.putNumber("Color/Blue", c.blue);
-
-        // SmartDashboard.putBoolean("Color/Bruh", bruh());
+        /*
+         *
+         * SmartDashboard.putString("Hex Color", s); // SmartDashboard.putString("Float Color",
+         * ColorUtils.toFloatString(c)); widget.setColor(s);
+         *
+         * var p = (double) color.getProximity(); p = (1.0 - (p / 255.0)) * 10.0;
+         * SmartDashboard.putNumber("Distance", p);
+         *
+         * // SmartDashboard.putNumber("Color/Red", c.red); //
+         * SmartDashboard.putNumber("Color/Green", c.green); //
+         * SmartDashboard.putNumber("Color/Blue", c.blue);
+         *
+         * // SmartDashboard.putBoolean("Color/Bruh", bruh());
+         *
+         */
     }
 
     private final void periodicSlow() {
