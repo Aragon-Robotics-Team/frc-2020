@@ -5,6 +5,7 @@ import art840.frc2020.map.Map;
 import art840.frc2020.oi.Joystick;
 import art840.frc2020.subsystems.Drivetrain;
 import art840.frc2020.subsystems.Lift;
+import art840.frc2020.subsystems.WheelSpinner;
 import art840.frc2020.util.InstantCommandDisabled;
 import art840.frc2020.util.NavX;
 import art840.frc2020.util.RobotBase;
@@ -24,6 +25,7 @@ import java.util.List;
 public class Robot extends RobotBase {
     public static Drivetrain d = new Drivetrain(Map.map.getDrivetrainConfig());
     public static Lift lift = new Lift(Map.map.getLiftConfig());
+    public static WheelSpinner wheelSpinner = new WheelSpinner(Map.map.getWheelSpinnerConfig());
     public static Joystick j = Map.map.getJoystick();
 
     // ColorSensor c = ColorSensor.getInstance();

@@ -4,6 +4,7 @@ import art840.frc2020.oi.GenericController;
 import art840.frc2020.oi.Joystick;
 import art840.frc2020.subsystems.Drivetrain;
 import art840.frc2020.subsystems.Lift;
+import art840.frc2020.subsystems.WheelSpinner;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.util.Units;
@@ -55,6 +56,16 @@ public class TestMap extends Map {
             {
                 solenoidFwd = 1;
                 solenoidRev = 0;
+            }
+        };
+    }
+
+    public WheelSpinner.Config getWheelSpinnerConfig() {
+        return new WheelSpinner.Config() {
+            {
+                motorControllerPort = 3;
+                maxSpeed = 0.5;
+                rampTime = 0.5;
             }
         };
     }

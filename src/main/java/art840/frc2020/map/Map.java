@@ -3,6 +3,7 @@ package art840.frc2020.map;
 import art840.frc2020.oi.Joystick;
 import art840.frc2020.subsystems.Drivetrain;
 import art840.frc2020.subsystems.Lift;
+import art840.frc2020.subsystems.WheelSpinner;
 
 public abstract class Map {
     public static final Map map = new TestMap();
@@ -14,4 +15,6 @@ public abstract class Map {
     public abstract Lift.Config getLiftConfig();
 
     public abstract Joystick getJoystick();
+
+    public abstract WheelSpinner.Config getWheelSpinnerConfig();
 }
