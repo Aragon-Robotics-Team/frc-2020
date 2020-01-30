@@ -53,6 +53,20 @@ public class ColorSensor {
         m_colorMatcher.addColorMatch(kGreenTarget);
         m_colorMatcher.addColorMatch(kRedTarget);
         // threadSlow.startPeriodic(1);
+        // For cycling to desired color
+    }
+
+    public static String colorArray() {
+        String[] desiredColor = {"RED", "BLUE", "GREEN", "YELLOW"};
+        int i = 0;
+        if (i < 3) {
+            i += 1;
+        } else {
+            i = 0;
+        }
+
+        // System.out.println("Desired color: " + desiredColor[i]);
+        return desiredColor[i];
     }
 
     /*
