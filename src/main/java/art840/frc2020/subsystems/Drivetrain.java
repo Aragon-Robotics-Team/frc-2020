@@ -521,6 +521,7 @@ public final class Drivetrain extends SubsystemBase {
 
     public void setBrake(boolean brake) {
         System.out.println("Brake: " + brake);
+        // System.out.println("Desired color: " + desiredColor[i]);
         var mode = brake ? IdleMode.kBrake : IdleMode.kCoast;
 
         motors.leftMotor.setIdleMode(mode);

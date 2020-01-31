@@ -5,6 +5,7 @@ import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.EncoderType;
 
 public class SparkMaxFactory {
     // Periodic Status Frames:
@@ -29,7 +30,7 @@ public class SparkMaxFactory {
         spark.clearFaults();
         spark.setIdleMode(IdleMode.kBrake);
         spark.enableVoltageCompensation(voltageCompensation);
-        spark.getEncoder().setPosition(0);
+        spark.getEncoder(EncoderType.kQuadrature, 8192).setPosition(0);
 
         return spark;
     }
