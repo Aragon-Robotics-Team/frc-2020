@@ -34,8 +34,9 @@ public class TestMap extends Map {
                 velocityPID.kP = 0.1;
 
                 maxVelocity = 3; // m/s
-                maxRotation = 2 * Math.PI; // rad/s
                 maxAcceleration = 6;
+                maxAngularVelocity = 2 * Math.PI; // rad/s
+                maxAngularAccel = 4 * Math.PI;
 
                 teleopLinearSlew = 6;
                 teleopRotationalSlew = 4 * Math.PI;
