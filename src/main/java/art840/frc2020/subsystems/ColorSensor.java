@@ -43,20 +43,30 @@ public class ColorSensor {
 
     private final ColorMatch m_colorMatcher = new ColorMatch();
 
-    private final Color kBlueTarget = ColorMatch.makeColor(0.0879, 0.3247, 0.5874);
-    private final Color kGreenTarget = ColorMatch.makeColor(0.2417, 0.5037, 0.2549);
-    private final Color kRedTarget = ColorMatch.makeColor(0.4924, 0.3650, 0.1426);
+    // private final Color kBlueTarget = ColorMatch.makeColor(0.0879, 0.3247, 0.5874);
+    // private final Color kGreenTarget = ColorMatch.makeColor(0.2417, 0.5037, 0.2549);
+    // private final Color kRedTarget = ColorMatch.makeColor(0.4924, 0.3650, 0.1426);
 
+    public enum Colors {
+        kBlue(ColorMatch.makeColor(0.0879, 0.3247, 0.5874)), kGreen(ColorMatch.makeColor(0.2417, 0.5037, 0.2549)), kRed(ColorMatch.makeColor(0.4924, 0.3650, 0.1426));
+        
+        public final Colors color;
+        
+        private Colors(Color color) {
+            this.color = color;
+        }
+    }
+    
     private ColorSensor() {
         threadFast.startPeriodic(0.1);
-        m_colorMatcher.addColorMatch(kBlueTarget);
-        m_colorMatcher.addColorMatch(kGreenTarget);
-        m_colorMatcher.addColorMatch(kRedTarget);
+        m_colorMatcher.addColorMatch(Colors.kBlue.color);
+        m_colorMatcher.addColorMatch(Colors.kGreen.color);
+        m_colorMatcher.addColorMatch(Colors.kRed.color);
         // threadSlow.startPeriodic(1);
         // For cycling to desired color
     }
 
-    public static String colorArray() {
+    /*public static String colorArray() {
         String[] desiredColor = {"RED", "BLUE", "GREEN", "YELLOW"};
         int i = 0;
         if (i < 3) {
@@ -67,11 +77,11 @@ public class ColorSensor {
 
         // System.out.println("Desired color: " + desiredColor[i]);
         return desiredColor[i];
-    }
+    }*/
 
-    /*
-     * public final boolean isConnected() { return color.m_simDevice != null; // private }
-     */
+    
+    //   public final boolean isConnected() { return color.m_simDevice != null; // private }
+     
 
     private final void periodicFast() {
         var c = color.getColor();
@@ -84,13 +94,13 @@ public class ColorSensor {
         String colorString;
         double colorNum;
         ColorMatchResult match = m_colorMatcher.matchClosestColor(c);
-        if (match.color == kBlueTarget) {
+        if (match.color == Colors.kBlue.color) {
             colorString = "Blue";
             colorNum = 1;
-        } else if (match.color == kRedTarget) {
+        } else if (match.color == Colors.kRed.color) {
             colorString = "Red";
             colorNum = 2;
-        } else if (match.color == kGreenTarget) {
+        } else if (match.color == Colors.kGreen.color) {
             colorString = "Green";
             colorNum = 3;
         } else {

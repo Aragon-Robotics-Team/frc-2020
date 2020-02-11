@@ -1,5 +1,6 @@
 package art840.frc2020;
 
+import art840.frc2020.commands.RotateToColor;
 import art840.frc2020.commands.drivetrain.auto.FollowTrajectory;
 import art840.frc2020.map.Map;
 import art840.frc2020.oi.Joystick;
@@ -41,6 +42,7 @@ public class Robot extends RobotBase {
             new Pose2d(3, -4, new Rotation2d(Math.PI)), d.configGen.generate());
     Command autoCommand = new FollowTrajectory(t);
     SendableChooser<Command> c = new SendableChooser<Command>();
+    Command command = new RotateToColor();
 
     public void addAuto(String name) {
         var command = (new FollowTrajectory(TrajectoryUtil.loadGeneratedPath(name)))

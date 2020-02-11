@@ -1,7 +1,6 @@
 package art840.frc2020.oi;
 
 import art840.frc2020.Robot;
-import art840.frc2020.subsystems.ColorSensor;
 import art840.frc2020.util.ScalingUtils;
 
 public class GenericController extends Joystick {
@@ -70,6 +69,8 @@ public class GenericController extends Joystick {
         getButton(Button.X).whenActive(() -> Robot.wheelSpinner.set(true), Robot.wheelSpinner);
         getButton(Button.Y).whenActive(() -> Robot.wheelSpinner.set(false), Robot.wheelSpinner);
         getButton(Button.A).whenActive(() -> Robot.wheelSpinner.stop(), Robot.wheelSpinner);
-        getButton(Button.LBump).whenActive(() -> ColorSensor.colorArray());
+        // getButton(Button.B).whenActive(() -> Commands.RotateToColor.goToColor(),
+        // Commands.RotateToColor);
+        // getButton(Button.LBump).whenActive(() -> ColorSensor.colorArray());
     }
 }
