@@ -4,6 +4,7 @@ import static java.util.Objects.requireNonNull;
 
 import art840.frc2020.Robot;
 import art840.frc2020.util.FalconDashboard;
+import art840.frc2020.util.InstantCommandDisabled;
 import art840.frc2020.util.NavX;
 import art840.frc2020.util.SparkMaxFactory;
 import art840.frc2020.util.TrajectoryConfigGen;
@@ -17,7 +18,6 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.ControlType;
 import com.revrobotics.EncoderType;
-import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.SlewRateLimiter;
 import edu.wpi.first.wpilibj.Timer;
@@ -36,6 +36,7 @@ import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import java.util.Map;
 
 public final class Drivetrain extends SubsystemBase {
@@ -68,7 +69,8 @@ public final class Drivetrain extends SubsystemBase {
         // Director
         public double maxVelocity;
         public double maxAcceleration;
-        public double maxRotation;
+        public double maxAngularVelocity;
+        public double maxAngularAccel;
 
         public double teleopLinearSlew = 10; // max m / sec ^ 2; no limit = inf
         public double teleopRotationalSlew = 10; // rad / sec ^ 2
@@ -136,9 +138,11 @@ public final class Drivetrain extends SubsystemBase {
             rightEncoder.setInverted(config.invertAll ^ config.invertRight
                     ^ config.invertAllEncoders ^ config.invertRightEncoders);
 
+            leftEncoder.setPosition(0);
             leftEncoder.setPositionConversionFactor(rotationsToMeters);
             leftEncoder.setVelocityConversionFactor(rpmToMetersPerSecond);
 
+            rightEncoder.setPosition(0);
             rightEncoder.setPositionConversionFactor(rotationsToMeters);
             rightEncoder.setVelocityConversionFactor(rpmToMetersPerSecond);
 
@@ -394,7 +398,7 @@ public final class Drivetrain extends SubsystemBase {
             System.out.println(speeds);
 
             return new ChassisSpeeds(throttleSlew.calculate(speeds.left * config.maxVelocity), 0,
-                    rotationSlew.calculate(-1 * speeds.right * config.maxRotation));
+                    rotationSlew.calculate(-1 * speeds.right * config.maxAngularVelocity));
         }
 
         public final void reset() {
@@ -412,8 +416,12 @@ public final class Drivetrain extends SubsystemBase {
         }
 
         public final Command driveArcade() {
-            return new CommandBase() {
+            return stopInstant().andThen(new WaitCommand(1), new CommandBase() {
                 Tuple tmp = new Tuple();
+
+                {
+                    addRequirements(Drivetrain.this);
+                }
 
                 public void initialize() {
                     controller.driveZero();
@@ -423,15 +431,17 @@ public final class Drivetrain extends SubsystemBase {
 
                 public void execute() {
                     driveArcade(tmp.set(Robot.j.getThrottle(), Robot.j.getTurn()));
-                    NetworkTableInstance.getDefault().flush();
-                    System.out.println("\n");
                 }
 
                 public void end(boolean i) {
                     controller.driveZero();
                     reset();
                 }
-            };
+            });
+        }
+
+        public final Command stopInstant() {
+            return new InstantCommandDisabled(controller::driveZero, Drivetrain.this);
         }
     }
 
@@ -498,6 +508,7 @@ public final class Drivetrain extends SubsystemBase {
                 maxVelocity = config.maxVelocity;
                 maxAcceleration = config.maxAcceleration;
                 maxVoltage = 10;
+                maxAngularAccel = config.maxAngularAccel;
 
                 feedforward = config.feedforwardLeft;
                 feedforward2 = config.feedforwardRight;

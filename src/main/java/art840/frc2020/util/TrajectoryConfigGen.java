@@ -5,6 +5,7 @@ import static java.util.Objects.requireNonNull;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
+import edu.wpi.first.wpilibj.trajectory.constraint.CentripetalAccelerationConstraint;
 import edu.wpi.first.wpilibj.trajectory.constraint.DifferentialDriveKinematicsConstraint;
 import edu.wpi.first.wpilibj.trajectory.constraint.DifferentialDriveVoltageConstraint;
 import edu.wpi.first.wpilibj.trajectory.constraint.TrajectoryConstraint;
@@ -16,6 +17,7 @@ public class TrajectoryConfigGen {
         public double maxVelocity;
         public double maxAcceleration;
         public double maxVoltage;
+        public double maxAngularAccel;
 
         public SimpleMotorFeedforward feedforward;
         public SimpleMotorFeedforward feedforward2;
@@ -43,6 +45,7 @@ public class TrajectoryConfigGen {
         addVoltageConstraint(config.feedforward2);
         constraints.add(
                 new DifferentialDriveKinematicsConstraint(config.kinematics, config.maxVelocity));
+        constraints.add(new CentripetalAccelerationConstraint(config.maxAngularAccel));
         constraints.addAll(config.constraints);
     }
 
