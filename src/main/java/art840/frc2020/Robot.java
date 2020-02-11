@@ -28,7 +28,7 @@ public class Robot extends RobotBase {
     public static WheelSpinner wheelSpinner = new WheelSpinner(Map.map.getWheelSpinnerConfig());
     public static Joystick j = Map.map.getJoystick();
 
-    ColorSensor color = ColorSensor.getInstance();
+    public static ColorSensor color = ColorSensor.getInstance();
 
     Command waitAndCoast =
             new WaitCommand(5).andThen(new InstantCommandDisabled(() -> d.setBrake(false)));

@@ -2,6 +2,8 @@ package art840.frc2020.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+
+import art840.frc2020.subsystems.ColorSensor.Colors;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class WheelSpinner extends SubsystemBase {
@@ -20,7 +22,11 @@ public class WheelSpinner extends SubsystemBase {
         motor.configOpenloopRamp(config.rampTime);
         motor.configClosedloopRamp(0);
     }
-
+    public static boolean spinDirection(Colors currentColor, Colors wantedColor){
+        //_currentColor = currentColor.ordinal();
+        return true;
+    }
+    
     public void set(boolean spin) {
         if (spin == true) {
             motor.set(ControlMode.PercentOutput, config.maxSpeed);

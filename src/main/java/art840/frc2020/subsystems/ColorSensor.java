@@ -41,19 +41,27 @@ public class ColorSensor {
         return instance;
     }
 
-    private final ColorMatch m_colorMatcher = new ColorMatch();
+    private final static ColorMatch m_colorMatcher = new ColorMatch();
 
-    // private final Color kBlueTarget = ColorMatch.makeColor(0.0879, 0.3247, 0.5874);
-    // private final Color kGreenTarget = ColorMatch.makeColor(0.2417, 0.5037, 0.2549);
-    // private final Color kRedTarget = ColorMatch.makeColor(0.4924, 0.3650, 0.1426);
+    // private final Color kBlueTarget = ColorMatch.makeColor(0.0879, 0.3247,
+    // 0.5874);
+    // private final Color kGreenTarget = ColorMatch.makeColor(0.2417, 0.5037,
+    // 0.2549);
+    // private final Color kRedTarget = ColorMatch.makeColor(0.4924, 0.3650,
+    // 0.1426);
 
     public enum Colors {
-        kBlue(ColorMatch.makeColor(0.0879, 0.3247, 0.5874)), kGreen(ColorMatch.makeColor(0.2417, 0.5037, 0.2549)), kRed(ColorMatch.makeColor(0.4924, 0.3650, 0.1426));
-        
-        public final Colors color;
-        
+        kBlue(ColorMatch.makeColor(0.0879, 0.3247, 0.5874)), kGreen(ColorMatch.makeColor(0.2417, 0.5037, 0.2549)),
+        kRed(ColorMatch.makeColor(0.4924, 0.3650, 0.1426));
+
+        public final Color color;
+
         private Colors(Color color) {
             this.color = color;
+        }
+
+        public static Colors nearestColors(Color obj) {
+            m_colorMatcher.match(color);
         }
     }
     

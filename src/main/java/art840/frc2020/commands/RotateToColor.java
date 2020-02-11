@@ -1,6 +1,11 @@
 package art840.frc2020.commands;
 
-public class RotateToColor extends( CommandBase{
+import art840.frc2020.Robot;
+import art840.frc2020.subsystems.ColorSensor.Colors;
+import edu.wpi.first.wpilibj.util.Color;
+import edu.wpi.first.wpilibj2.command.CommandBase;
+
+public class RotateToColor extends CommandBase {
     Colors color;
     public RotateToColor(){
         this.color=colors;
@@ -10,7 +15,7 @@ public class RotateToColor extends( CommandBase{
         Colors current = Robot.color.getCurrentColor();
     }
     
-    public booleanisFinished() {
+    public Color booleanisFinished() {
         return Robot.color.getCurrentColor() == color;
     }
     
