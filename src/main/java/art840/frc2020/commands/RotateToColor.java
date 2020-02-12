@@ -7,19 +7,20 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 
 public class RotateToColor extends CommandBase {
     Colors color;
-    public RotateToColor(){
-        this.color=colors;
+
+    public RotateToColor(Colors color) {
+        Colors colors = this.color;
     }
-    
-    public void execute(){
+
+    public void execute() {
         Colors current = Robot.color.getCurrentColor();
     }
-    
+
     public Color booleanisFinished() {
         return Robot.color.getCurrentColor() == color;
     }
-    
-    public void end(boolean interrupted){
+
+    public void end(boolean interrupted) {
         Robot.wheelSpinner.stop();
     }
 }

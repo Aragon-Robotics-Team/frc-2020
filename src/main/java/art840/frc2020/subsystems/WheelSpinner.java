@@ -23,8 +23,16 @@ public class WheelSpinner extends SubsystemBase {
         motor.configClosedloopRamp(0);
     }
     public static boolean spinDirection(Colors currentColor, Colors wantedColor){
-        //_currentColor = currentColor.ordinal();
-        return true;
+        //true = cw, false = ccw
+        int _currentColor = currentColor.ordinal();
+        int _wantedColor = wantedColor.ordinal();
+        int cw = (_wantedColor - _currentColor) % 4;
+        int ccw = (_currentColor - _wantedColor) % 4;
+        if (cw <= ccw){
+            return true;
+        } else {
+            return false;
+        }
     }
     
     public void set(boolean spin) {

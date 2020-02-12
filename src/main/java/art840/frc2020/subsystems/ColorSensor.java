@@ -12,6 +12,8 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardContainer;
 import edu.wpi.first.wpilibj.util.Color;
+
+import java.util.HashMap;
 import java.util.Map;
 
 public class ColorSensor {
@@ -25,17 +27,16 @@ public class ColorSensor {
     public final ShuffleboardContainer tab = Shuffleboard.getTab("Color");
 
     public final ShuffleboardRGB widget = new ShuffleboardRGB(tab, "Color Sensor");
-    public final NetworkTableEntry hexString =
-            tab.add("Hex Color", "#000000").withWidget(BuiltInWidgets.kTextView).getEntry();
-    public final NetworkTableEntry floatColor =
-            tab.add("Float Color", "123").withWidget(BuiltInWidgets.kTextView).getEntry();
-    public final NetworkTableEntry detectedColor =
-            tab.add("Detected Color", "123").withWidget(BuiltInWidgets.kTextView).getEntry();
-    public final NetworkTableEntry confidence =
-            tab.add("Confidence", 123).withWidget(BuiltInWidgets.kTextView).getEntry();
-    public final NetworkTableEntry colorNumGraph =
-            tab.add("ColorNum", 0).withWidget(BuiltInWidgets.kGraph)
-                    .withProperties(Map.of("Visible time", 5.0)).getEntry();
+    public final NetworkTableEntry hexString = tab.add("Hex Color", "#000000").withWidget(BuiltInWidgets.kTextView)
+            .getEntry();
+    public final NetworkTableEntry floatColor = tab.add("Float Color", "123").withWidget(BuiltInWidgets.kTextView)
+            .getEntry();
+    public final NetworkTableEntry detectedColor = tab.add("Detected Color", "123").withWidget(BuiltInWidgets.kTextView)
+            .getEntry();
+    public final NetworkTableEntry confidence = tab.add("Confidence", 123).withWidget(BuiltInWidgets.kTextView)
+            .getEntry();
+    public final NetworkTableEntry colorNumGraph = tab.add("ColorNum", 0).withWidget(BuiltInWidgets.kGraph)
+            .withProperties(Map.of("Visible time", 5.0)).getEntry();
 
     public static final ColorSensor getInstance() {
         return instance;
@@ -56,12 +57,16 @@ public class ColorSensor {
 
         public final Color color;
 
+
         private Colors(Color color) {
             this.color = color;
         }
+            
 
-        public static Colors nearestColors(Color obj) {
-            m_colorMatcher.match(color);
+        public static Colors closestColors () {
+            Colors result = 
+            public Map<Color, Colors> convertToColors = new HashMap<Color, Colors>();
+            HashMap.put(colorToMatch, result);
         }
     }
     
@@ -76,7 +81,7 @@ public class ColorSensor {
 
     /*public static String colorArray() {
         String[] desiredColor = {"RED", "BLUE", "GREEN", "YELLOW"};
-        int i = 0;
+        int i = 0; 
         if (i < 3) {
             i += 1;
         } else {
