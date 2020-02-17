@@ -105,7 +105,7 @@ public final class Drivetrain extends SubsystemBase {
     public final class Odometry {
         private static final double updatePeriod = 0.01;
 
-        public final Tuple vel = new Tuple(); // todo: synchronized
+        public final Tuple vel = new Tuple(); // TODO: synchronized
         public final Tuple pos = new Tuple();
 
         private Pose2d pose = new Pose2d();
@@ -430,7 +430,7 @@ public final class Drivetrain extends SubsystemBase {
                 }
 
                 public void execute() {
-                    driveArcade(tmp.set(Robot.j.getThrottle(), Robot.j.getTurn()));
+                    driveArcade(tmp.set(Robot.joystick.getThrottle(), Robot.joystick.getTurn()));
                 }
 
                 public void end(boolean i) {
@@ -453,6 +453,10 @@ public final class Drivetrain extends SubsystemBase {
     public final Teleop teleop;
 
     public final TrajectoryConfigGen configGen;
+
+    public Drivetrain() {
+        this(art840.frc2020.map.Map.map.getDrivetrainConfig());
+    }
 
     public Drivetrain(final Config _config) {
         config = _config;

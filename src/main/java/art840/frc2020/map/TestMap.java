@@ -4,12 +4,17 @@ import art840.frc2020.oi.GenericController;
 import art840.frc2020.oi.Joystick;
 import art840.frc2020.subsystems.Drivetrain;
 import art840.frc2020.subsystems.Lift;
+import art840.frc2020.subsystems.Shooter;
 import art840.frc2020.subsystems.WheelSpinner;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.util.Units;
 
 public class TestMap extends Map {
+    public Joystick getJoystick() {
+        return new GenericController(0);
+    }
+
     public Drivetrain.Config getDrivetrainConfig() {
         return new Drivetrain.Config() {
             {
@@ -27,6 +32,7 @@ public class TestMap extends Map {
                 gearRatio = 1;
                 wheelCircumference = Units.inchesToMeters(6.0 * Math.PI);
                 trackWidth = Units.inchesToMeters(24.0);
+                // characterized track width: 0.6257 meters
 
                 // feedforwardCombined = new SimpleMotorFeedforward(0.87, 2.29, 0.617);
                 feedforwardLeft = new SimpleMotorFeedforward(0.857, 2.3, 0.611);
@@ -44,14 +50,6 @@ public class TestMap extends Map {
         };
     }
 
-    public Joystick getJoystick() {
-        return new GenericController(0);
-    }
-
-    public int getPCMId() {
-        return 1;
-    }
-
     public Lift.Config getLiftConfig() {
         return new Lift.Config() {
             {
@@ -67,7 +65,33 @@ public class TestMap extends Map {
                 motorControllerPort = 3;
                 maxSpeed = 0.5;
                 rampTime = 0.5;
+                invert = false;
             }
         };
+    }
+
+    public Shooter.Config getShooterConfig() {
+        return new Shooter.Config() {
+            {
+                // All values temporary, just guessing
+                motorPort = 0;
+                motorInvert = false;
+
+                encoderPortA = 1;
+                encoderPortB = 2;
+                encoderInvert = false;
+                encoderResolution = 2048;
+
+                speedRPM = 4000;
+                rampTime = 1.0;
+
+                kP = 0.05;
+                constantFF = 10;
+            }
+        };
+    }
+
+    public int getPCMId() {
+        return 1;
     }
 }

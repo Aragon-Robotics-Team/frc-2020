@@ -1,19 +1,23 @@
 package art840.frc2020.subsystems;
 
+import art840.frc2020.map.Map;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-
-import art840.frc2020.subsystems.ColorSensor.Colors;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class WheelSpinner extends SubsystemBase {
-    public TalonSRX motor;
-    private Config config;
+    public final TalonSRX motor;
+    private final Config config;
 
     public static class Config {
         public int motorControllerPort;
         public double maxSpeed;
         public double rampTime;
+        public boolean invert;
+    }
+
+    public WheelSpinner() {
+        this(Map.map.getWheelSpinnerConfig());
     }
 
     public WheelSpinner(final Config _config) {
@@ -22,25 +26,10 @@ public class WheelSpinner extends SubsystemBase {
         motor.configOpenloopRamp(config.rampTime);
         motor.configClosedloopRamp(0);
     }
-    public static boolean spinDirection(Colors currentColor, Colors wantedColor){
-        //true = cw, false = ccw
-        int _currentColor = currentColor.ordinal();
-        int _wantedColor = wantedColor.ordinal();
-        int cw = (_wantedColor - _currentColor) % 4;
-        int ccw = (_currentColor - _wantedColor) % 4;
-        if (cw <= ccw){
-            return true;
-        } else {
-            return false;
-        }
-    }
-    
+
     public void set(boolean spin) {
-        if (spin == true) {
-            motor.set(ControlMode.PercentOutput, config.maxSpeed);
-        } else {
-            motor.set(ControlMode.PercentOutput, -config.maxSpeed);
-        }
+        // true == clockwise
+        motor.set(ControlMode.PercentOutput, (spin ^ config.invert ? 1 : -1) * config.maxSpeed);
     }
 
     public void stop() {

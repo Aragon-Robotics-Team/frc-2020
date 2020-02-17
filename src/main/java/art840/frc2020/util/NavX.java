@@ -19,6 +19,8 @@ public class NavX {
         return Rotation2d.fromDegrees(ahrs.getYaw() * invertConst);
     }
 
+    // TODO: is this accurate?
+    // https://github.com/kauailabs/navxmxp/issues/69
     public static double getRate() {
         return ahrs.getRate() * invertConst;
     }

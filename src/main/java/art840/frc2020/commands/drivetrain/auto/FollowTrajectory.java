@@ -12,7 +12,7 @@ public class FollowTrajectory extends CommandBase {
 
     public FollowTrajectory(Trajectory trajectory) {
         this.trajectory = trajectory;
-        addRequirements(Robot.d);
+        addRequirements(Robot.drivetrain);
     }
 
     @Override
@@ -25,8 +25,8 @@ public class FollowTrajectory extends CommandBase {
         var state = trajectory.sample(0);
         System.out.println("State1: " + state);
 
-        Robot.d.odometry.resetToPose(state.poseMeters);
-        Robot.d.auto.setSavedVel(state);
+        Robot.drivetrain.odometry.resetToPose(state.poseMeters);
+        Robot.drivetrain.auto.setSavedVel(state);
 
         timer.reset();
         timer.start();
@@ -35,7 +35,7 @@ public class FollowTrajectory extends CommandBase {
     @Override
     public void execute() {
         FalconDashboard.instance.show(); // TODO: only on first run?
-        Robot.d.auto.driveRamsete(trajectory.sample(timer.get()));
+        Robot.drivetrain.auto.driveRamsete(trajectory.sample(timer.get()));
     }
 
     @Override

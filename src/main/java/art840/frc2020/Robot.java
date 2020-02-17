@@ -23,28 +23,27 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import java.util.List;
 
 public class Robot extends RobotBase {
-    public static Drivetrain d = new Drivetrain(Map.map.getDrivetrainConfig());
-    public static Lift lift = new Lift(Map.map.getLiftConfig());
-    public static WheelSpinner wheelSpinner = new WheelSpinner(Map.map.getWheelSpinnerConfig());
-    public static Joystick j = Map.map.getJoystick();
+    public static Drivetrain drivetrain = new Drivetrain();
+    public static Lift lift = new Lift();
+    public static WheelSpinner wheelSpinner = new WheelSpinner();
+    public static ColorSensor colorSensor = new ColorSensor();
+    public static Joystick joystick = Map.map.getJoystick();
 
-    public static ColorSensor color = ColorSensor.getInstance();
-
-    Command waitAndCoast =
-            new WaitCommand(5).andThen(new InstantCommandDisabled(() -> d.setBrake(false)));
+    Command waitAndCoast = new WaitCommand(5)
+            .andThen(new InstantCommandDisabled(() -> drivetrain.setBrake(false)));
 
     Trajectory t = TrajectoryGenerator.generateTrajectory(
             new Pose2d(10, -4, new Rotation2d(Math.PI)),
             List.of(new Translation2d(23. / 3., -5), new Translation2d(15.6 / 3., -9.64 / 3.),
                     new Translation2d(10. / 3., -12.7 / 3)),
-            new Pose2d(3, -4, new Rotation2d(Math.PI)), d.configGen.generate());
+            new Pose2d(3, -4, new Rotation2d(Math.PI)), drivetrain.configGen.generate());
     Command autoCommand = new FollowTrajectory(t);
     SendableChooser<Command> c = new SendableChooser<Command>();
     Command command = new RotateToColor();
 
     public void addAuto(String name) {
         var command = (new FollowTrajectory(TrajectoryUtil.loadGeneratedPath(name)))
-                .andThen(d.controller::driveZero, d);
+                .andThen(drivetrain.controller::driveZero, drivetrain);
         c.addOption(name, command);
     }
 
@@ -55,27 +54,27 @@ public class Robot extends RobotBase {
         // addAuto("FWD");
         // addAuto("LFWD");
         // addAuto("RFWD");
-        // Shuffleboard.getTab("Drivetrain").add(c);
+        // Shuffleboardrivetrain.getTab("Drivetrain").add(c);
 
         NavX.ahrs.reset();
-        d.odometry.resetAll();
+        drivetrain.odometry.resetAll();
     }
 
     @Override
     public void teleopInit() {
         waitAndCoast.cancel();
-        d.setBrake(true);
+        drivetrain.setBrake(true);
 
-        d.odometry.resetAll();
-        d.controller.reset();
+        drivetrain.odometry.resetAll();
+        drivetrain.controller.reset();
 
-        d.teleop.driveArcade().beforeStarting(d.controller::driveZero).schedule();
+        drivetrain.teleop.driveArcade().beforeStarting(drivetrain.controller::driveZero).schedule();
 
         // Tuple vel = new Tuple(3, 3);
         // Tuple ff = new Tuple(7.5, 7.5);
 
         // (new WaitCommand(1))
-        // .andThen(new RunCommand(() -> d.controller._driveRawVelocity(vel, ff), d))
+        // .andThen(new RunCommand(() -> drivetrain.controller._driveRawVelocity(vel, ff), d))
         // .schedule();
     }
 
@@ -87,18 +86,18 @@ public class Robot extends RobotBase {
     @Override
     public void autonomousInit() {
         waitAndCoast.cancel();
-        d.setBrake(true);
+        drivetrain.setBrake(true);
 
         NavX.ahrs.reset();
-        d.controller.reset();
-        d.odometry.resetAll();
+        drivetrain.controller.reset();
+        drivetrain.odometry.resetAll();
 
         // (c.getSelected()).schedule();
-        // autoCommand.schedule();
+        // autoCommandrivetrain.schedule();
         // (new WaitCommand(1))
         // .andThen(new RunCommand(
-        // () -> d.controller._driveRawVelocity(Tuple.zero, Tuple.zero), d))
+        // () -> drivetrain.controller._driveRawVelocity(Tuple.zero, Tuple.zero), d))
         // .schedule();
-        // (new RunCommand((() -> d.controller._driveVoltage(Tuple.zero)), d)).schedule();
+        // (new RunCommand((() -> drivetrain.controller._driveVoltage(Tuple.zero)), d)).schedule();
     }
 }
