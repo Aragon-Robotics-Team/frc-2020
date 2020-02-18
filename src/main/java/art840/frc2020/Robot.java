@@ -1,12 +1,12 @@
 package art840.frc2020;
 
-import art840.frc2020.commands.RotateToColor;
 import art840.frc2020.commands.drivetrain.auto.FollowTrajectory;
 import art840.frc2020.map.Map;
 import art840.frc2020.oi.Joystick;
 import art840.frc2020.subsystems.ColorSensor;
 import art840.frc2020.subsystems.Drivetrain;
 import art840.frc2020.subsystems.Lift;
+import art840.frc2020.subsystems.Shooter;
 import art840.frc2020.subsystems.WheelSpinner;
 import art840.frc2020.util.InstantCommandDisabled;
 import art840.frc2020.util.NavX;
@@ -27,6 +27,7 @@ public class Robot extends RobotBase {
     public static Lift lift = new Lift();
     public static WheelSpinner wheelSpinner = new WheelSpinner();
     public static ColorSensor colorSensor = new ColorSensor();
+    public static Shooter shooter = new Shooter();
     public static Joystick joystick = Map.map.getJoystick();
 
     Command waitAndCoast = new WaitCommand(5)
@@ -39,7 +40,6 @@ public class Robot extends RobotBase {
             new Pose2d(3, -4, new Rotation2d(Math.PI)), drivetrain.configGen.generate());
     Command autoCommand = new FollowTrajectory(t);
     SendableChooser<Command> c = new SendableChooser<Command>();
-    Command command = new RotateToColor();
 
     public void addAuto(String name) {
         var command = (new FollowTrajectory(TrajectoryUtil.loadGeneratedPath(name)))
@@ -62,6 +62,10 @@ public class Robot extends RobotBase {
 
     @Override
     public void teleopInit() {
+        shooter.reset();
+        // (new RunCommand(() -> shooter.setVoltage(12 * joystick.getThrottle()),
+        // shooter)).schedule();
+
         waitAndCoast.cancel();
         drivetrain.setBrake(true);
 
@@ -81,6 +85,13 @@ public class Robot extends RobotBase {
     @Override
     public void disabledInit() {
         waitAndCoast.schedule();
+        shooter.reset();
+    }
+
+    @Override
+    public void teleopPeriodic() {
+        // NetworkTableInstance.getDefault().flush();
+        // shooter.on();
     }
 
     @Override

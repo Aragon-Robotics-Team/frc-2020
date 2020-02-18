@@ -22,7 +22,8 @@ public class TestMap extends Map {
                 rightMotor = 5;
 
                 leftMotorSlave = 1;
-                rightMotorSlave = 3;
+                // rightMotorSlave = 3;
+                rightMotorSlave = -1; // stolen spark for shooter
 
                 invertAll = true;
 
@@ -74,19 +75,19 @@ public class TestMap extends Map {
         return new Shooter.Config() {
             {
                 // All values temporary, just guessing
-                motorPort = 0;
+                motorPort = 3;
                 motorInvert = false;
 
-                encoderPortA = 1;
-                encoderPortB = 2;
+                encoderPortA = 0;
+                encoderPortB = 1;
                 encoderInvert = false;
                 encoderResolution = 2048;
 
-                speedRPM = 4000;
-                rampTime = 1.0;
+                speedRPM = 3400;
+                rampTime = 5.0;
 
-                kP = 0.05;
-                constantFF = 10;
+                kP = 0.0; // no good kP found: too noisy at any value
+                constantFF = 7.9;
             }
         };
     }

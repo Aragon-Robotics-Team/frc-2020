@@ -34,6 +34,7 @@ public class GenericController extends Joystick {
 
     static final double scale(double val) {
         return ScalingUtils.square(ScalingUtils.applyDeadband(val, 0.07));
+        // return (val + 1) / 2; // for shooter testing
     }
 
     public final double getThrottle() {

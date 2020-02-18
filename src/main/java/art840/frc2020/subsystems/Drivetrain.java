@@ -523,15 +523,6 @@ public final class Drivetrain extends SubsystemBase {
 
     public void periodic() {
         FalconDashboard.instance.updateRobot(odometry.getPose());
-
-        SmartDashboard.putBoolean("Left Reset",
-                motors.leftMotor.getStickyFault(CANSparkMax.FaultID.kHasReset));
-        SmartDashboard.putBoolean("LeftS Reset",
-                motors.leftMotorSlave.getStickyFault(CANSparkMax.FaultID.kHasReset));
-        SmartDashboard.putBoolean("Right Reset",
-                motors.rightMotor.getStickyFault(CANSparkMax.FaultID.kHasReset));
-        SmartDashboard.putBoolean("RightS Reset",
-                motors.rightMotorSlave.getStickyFault(CANSparkMax.FaultID.kHasReset));
     }
 
     public void setBrake(boolean brake) {
@@ -540,8 +531,13 @@ public final class Drivetrain extends SubsystemBase {
         var mode = brake ? IdleMode.kBrake : IdleMode.kCoast;
 
         motors.leftMotor.setIdleMode(mode);
-        motors.leftMotorSlave.setIdleMode(mode);
         motors.rightMotor.setIdleMode(mode);
-        motors.rightMotorSlave.setIdleMode(mode);
+
+        if (config.leftMotorSlave != -1) {
+            motors.leftMotorSlave.setIdleMode(mode);
+        }
+        if (config.rightMotorSlave != -1) {
+            motors.rightMotorSlave.setIdleMode(mode);
+        }
     }
 }

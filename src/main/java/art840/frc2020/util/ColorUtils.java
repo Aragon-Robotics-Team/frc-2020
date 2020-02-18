@@ -1,8 +1,8 @@
 package art840.frc2020.util;
 
 import com.revrobotics.ColorSensorV3;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
-import edu.wpi.first.wpilibj.util.ColorShim;
 
 public class ColorUtils {
     private ColorUtils() {}
@@ -42,6 +42,6 @@ public class ColorUtils {
 
         double max = Math.max(red, Math.max(green, blue));
 
-        return new ColorShim(red / max, green / max, blue / max);
+        return new Color(red / max, green / max, blue / max);
     }
 }

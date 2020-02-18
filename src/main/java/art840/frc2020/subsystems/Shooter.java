@@ -9,6 +9,9 @@ import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.SlewRateLimiter;
 import edu.wpi.first.wpilibj.controller.PIDController;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Shooter extends SubsystemBase {
@@ -37,6 +40,9 @@ public class Shooter extends SubsystemBase {
     final PIDController pid;
     final SlewRateLimiter ramp;
 
+    ShuffleboardLayout motorTelemetry;
+    double voltage;
+
     public Shooter() {
         this(Map.map.getShooterConfig());
     }
@@ -55,10 +61,24 @@ public class Shooter extends SubsystemBase {
 
         pid = new PIDController(config.kP, 0, 0);
         ramp = new SlewRateLimiter(1 / config.rampTime);
+
+        var tab = Shuffleboard.getTab("Shooter");
+        tab.add("Encoder", encoder);
+
+        motorTelemetry = tab.getLayout("Motor", BuiltInLayouts.kList);
+        motorTelemetry.addNumber("Voltage", () -> voltage);
+        motorTelemetry.addNumber("Output", motor::get);
+        motorTelemetry.addNumber("RPM", this::getRPM);
+        motorTelemetry.addNumber("Error", () -> this.getRPM() - config.speedRPM);
     }
 
     public final double getRPM() {
-        return encoder.getRate() / 60;
+        return encoder.getRate() * 60;
+    }
+
+    public final void setVoltage(double voltage) {
+        this.voltage = voltage;
+        motor.setVoltage(voltage);
     }
 
     public final void reset() {
@@ -71,7 +91,7 @@ public class Shooter extends SubsystemBase {
         final double desiredPercent = ramp.calculate(1);
         final double output = pid.calculate(getRPM(), config.speedRPM * desiredPercent)
                 + (config.constantFF * desiredPercent);
-        motor.setVoltage(Math.max(0, output));
+        setVoltage(Math.max(0, output));
     }
 
     public void off() {
@@ -80,6 +100,6 @@ public class Shooter extends SubsystemBase {
         ramp.calculate(0);
         pid.calculate(getRPM(), 0);
 
-        motor.setVoltage(0);
+        setVoltage(0);
     }
 }

@@ -1,10 +1,12 @@
 package art840.frc2020.subsystems;
 
 import art840.frc2020.util.ColorUtils;
+import art840.frc2020.util.ShuffleboardRGB;
 import com.revrobotics.ColorMatch;
 import com.revrobotics.ColorMatchResult;
 import com.revrobotics.ColorSensorV3;
 import edu.wpi.first.wpilibj.I2C;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.util.EnumSet;
@@ -14,10 +16,11 @@ import java.util.Map;
 public class ColorSensor extends SubsystemBase {
     public final ColorSensorV3 color = new ColorSensorV3(I2C.Port.kOnboard);
 
+    public Colors currentColor;
     String matchedColor;
     String matchedColorHex;
     double matchedConfidence;
-    // ShuffleboardRGB rawColor = new ShuffleboardRGB(tab, name)
+    ShuffleboardRGB rawColor = new ShuffleboardRGB(Shuffleboard.getTab("TheTab"), "isIsAName");
     String rawColorHex;
     String rawColorFloat;
 
@@ -78,16 +81,22 @@ public class ColorSensor extends SubsystemBase {
         rawColorFloat = ColorUtils.toFloatString(measured);
 
         final var result = Colors.matchColor(measured);
-        matchedColor = result.color.toString();
-        matchedColorHex = result.color.hex;
+        currentColor = result.color;
         matchedConfidence = result.confidence;
+
+        matchedColor = currentColor.toString();
+        matchedColorHex = currentColor.hex;
+
+        rawColor.setColor(rawColorHex);
     }
 
-    public static boolean spinDirection(Colors currentColor, Colors wantedColor) {
+    public static boolean calculateDirection(Colors currentColor, Colors wantedColor) {
+        // TODO: color offset - field sensor not same position as robot sensor
         // true = clockwise
-        final int difference = currentColor.ordinal() - wantedColor.ordinal();
-        final int cw = difference % Colors.size;
-        final int ccw = -difference % Colors.size;
-        return cw <= ccw;
+        final int difference = wantedColor.ordinal() - currentColor.ordinal();
+        final int cw = Math.floorMod(difference, Colors.size);
+        final int ccw = Math.floorMod(-difference, Colors.size);
+        final boolean direction = cw <= ccw;
+        return direction;
     }
 }
