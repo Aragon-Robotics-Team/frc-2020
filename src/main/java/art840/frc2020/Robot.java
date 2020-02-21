@@ -7,6 +7,7 @@ import art840.frc2020.subsystems.ColorSensor;
 import art840.frc2020.subsystems.Drivetrain;
 import art840.frc2020.subsystems.Lift;
 import art840.frc2020.subsystems.Server;
+import art840.frc2020.subsystems.LimeLight;
 import art840.frc2020.subsystems.Shooter;
 import art840.frc2020.subsystems.WheelSpinner;
 import art840.frc2020.util.InstantCommandDisabled;
@@ -31,6 +32,7 @@ public class Robot extends RobotBase {
     public static WheelSpinner wheelSpinner = new WheelSpinner();
     public static ColorSensor colorSensor = new ColorSensor();
     public static Shooter shooter = new Shooter();
+    public static LimeLight limeLight = new LimeLight();
     public static Joystick joystick = Map.map.getJoystick();
     public static Server server = new Server();
 
