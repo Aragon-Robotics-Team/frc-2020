@@ -32,7 +32,7 @@ public class Robot extends RobotBase {
     public static WheelSpinner wheelSpinner = new WheelSpinner();
     public static ColorSensor colorSensor = new ColorSensor();
     public static Shooter shooter = new Shooter();
-    public static LimeLight limeLight = new LimeLight();
+    public static Limelight limelight = new Limelight();
     public static Joystick joystick = Map.map.getJoystick();
     public static Server server = new Server();
 
