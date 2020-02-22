@@ -1,22 +1,33 @@
 package art840.frc2020.util;
 
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardContainer;
-import edu.wpi.first.wpilibj.shuffleboard.SuppliedValueWidget;
+import io.github.oblarg.oblog.Loggable;
+import io.github.oblarg.oblog.ShuffleboardContainerWrapper;
+import io.github.oblarg.oblog.SimpleWidgetWrapper;
 import java.util.Map;
 
-public class ShuffleboardRGB {
-    public final SuppliedValueWidget<Boolean> widget;
-
+public class ShuffleboardRGB implements Loggable {
     private static final String offStr = "Color when false";
     private static final String onStr = "Color when true";
 
-    public ShuffleboardRGB(ShuffleboardContainer tab, String name) {
-        widget = tab.addBoolean(name, () -> false).withWidget(BuiltInWidgets.kBooleanBox);
+    private SimpleWidgetWrapper widget;
+
+    public final boolean skipLayout() {
+        return true;
+    }
+
+    public final void addCustomLogging(ShuffleboardContainerWrapper tab) {
+        widget = tab.add("A", false).withWidget(BuiltInWidgets.kBooleanBox.getWidgetName());
         setColor("#000000");
     }
 
     public final void setColor(String color) {
-        widget.withProperties(Map.of(offStr, color, onStr, color));
+        if (widget != null) {
+            widget.withProperties(getMap(color));
+        }
+    }
+
+    private static final Map<String, Object> getMap(String color) {
+        return Map.of(offStr, color, onStr, color);
     }
 }

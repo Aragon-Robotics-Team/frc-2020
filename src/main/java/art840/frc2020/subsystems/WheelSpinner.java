@@ -1,8 +1,10 @@
 package art840.frc2020.subsystems;
 
 import art840.frc2020.map.Map;
+import art840.frc2020.util.InstantCommandDisabled;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class WheelSpinner extends SubsystemBase {
@@ -34,5 +36,9 @@ public class WheelSpinner extends SubsystemBase {
 
     public void stop() {
         motor.set(ControlMode.PercentOutput, 0);
+    }
+
+    public Command stopCommand() {
+        return new InstantCommandDisabled(this::stop, this);
     }
 }

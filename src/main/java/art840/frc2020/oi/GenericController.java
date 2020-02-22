@@ -1,6 +1,8 @@
 package art840.frc2020.oi;
 
 import art840.frc2020.Robot;
+import art840.frc2020.commands.RotateToColor;
+import art840.frc2020.subsystems.ColorSensor.Colors;
 import art840.frc2020.util.ScalingUtils;
 
 public class GenericController extends Joystick {
@@ -67,11 +69,13 @@ public class GenericController extends Joystick {
         // getButton(Button.Y).whenActive(new
         // InstantCommandDisabled(FalconDashboard.instance::hide));
 
-        getButton(Button.X).whenActive(() -> Robot.wheelSpinner.set(true), Robot.wheelSpinner);
-        getButton(Button.Y).whenActive(() -> Robot.wheelSpinner.set(false), Robot.wheelSpinner);
-        getButton(Button.A).whenActive(() -> Robot.wheelSpinner.stop(), Robot.wheelSpinner);
-        // getButton(Button.B).whenActive(() -> Commands.RotateToColor.goToColor(),
-        // Commands.RotateToColor);
-        // getButton(Button.LBump).whenActive(() -> ColorSensor.colorArray());
+        // getButton(Button.X).whenActive(() -> Robot.wheelSpinner.set(true), Robot.wheelSpinner);
+        // getButton(Button.Y).whenActive(() -> Robot.wheelSpinner.set(false), Robot.wheelSpinner);
+        // getButton(Button.A).whenActive(() -> Robot.wheelSpinner.stop(), Robot.wheelSpinner);
+
+        getButton(Button.X).whenActive(new RotateToColor(Colors.Blue));
+        getButton(Button.Y).whenActive(new RotateToColor(Colors.Yellow));
+        getButton(Button.B).whenActive(new RotateToColor(Colors.Red));
+        getButton(Button.A).whenActive(Robot.wheelSpinner.stopCommand());
     }
 }

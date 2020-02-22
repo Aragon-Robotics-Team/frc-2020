@@ -66,7 +66,7 @@ public class TestMap extends Map {
                 motorControllerPort = 3;
                 maxSpeed = 0.5;
                 rampTime = 0.5;
-                invert = false;
+                invert = true;
             }
         };
     }

@@ -1,7 +1,6 @@
 package art840.frc2020.commands;
 
 import art840.frc2020.Robot;
-import art840.frc2020.subsystems.ColorSensor;
 import art840.frc2020.subsystems.ColorSensor.Colors;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
@@ -14,8 +13,8 @@ public class RotateToColor extends CommandBase {
     }
 
     public void execute() {
-        var direction = ColorSensor.calculateDirection(Robot.colorSensor.currentColor, color);
-        Robot.wheelSpinner.set(direction);
+        var direction = Robot.colorSensor.calculateDirection(color);
+        Robot.wheelSpinner.set(!direction);
     }
 
     public boolean isFinished() {

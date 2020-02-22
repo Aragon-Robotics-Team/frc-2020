@@ -6,6 +6,7 @@ import art840.frc2020.oi.Joystick;
 import art840.frc2020.subsystems.ColorSensor;
 import art840.frc2020.subsystems.Drivetrain;
 import art840.frc2020.subsystems.Lift;
+import art840.frc2020.subsystems.Server;
 import art840.frc2020.subsystems.Shooter;
 import art840.frc2020.subsystems.WheelSpinner;
 import art840.frc2020.util.InstantCommandDisabled;
@@ -19,7 +20,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import io.github.oblarg.oblog.Logger;
 import java.util.List;
 
 public class Robot extends RobotBase {
@@ -29,6 +32,7 @@ public class Robot extends RobotBase {
     public static ColorSensor colorSensor = new ColorSensor();
     public static Shooter shooter = new Shooter();
     public static Joystick joystick = Map.map.getJoystick();
+    public static Server server = new Server();
 
     Command waitAndCoast = new WaitCommand(5)
             .andThen(new InstantCommandDisabled(() -> drivetrain.setBrake(false)));
@@ -58,13 +62,15 @@ public class Robot extends RobotBase {
 
         NavX.ahrs.reset();
         drivetrain.odometry.resetAll();
+
+        Logger.configureLogging(this);
     }
 
     @Override
     public void teleopInit() {
         shooter.reset();
-        // (new RunCommand(() -> shooter.setVoltage(12 * joystick.getThrottle()),
-        // shooter)).schedule();
+        shooter.beginLogging();
+        (new RunCommand(shooter::on, shooter)).schedule();
 
         waitAndCoast.cancel();
         drivetrain.setBrake(true);
@@ -86,6 +92,7 @@ public class Robot extends RobotBase {
     public void disabledInit() {
         waitAndCoast.schedule();
         shooter.reset();
+        shooter.endLogging();
     }
 
     @Override

@@ -6,27 +6,31 @@ import com.revrobotics.ColorMatch;
 import com.revrobotics.ColorMatchResult;
 import com.revrobotics.ColorSensorV3;
 import edu.wpi.first.wpilibj.I2C;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import io.github.oblarg.oblog.Loggable;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ColorSensor extends SubsystemBase {
+public class ColorSensor extends SubsystemBase implements Loggable {
     public final ColorSensorV3 color = new ColorSensorV3(I2C.Port.kOnboard);
 
     public Colors currentColor;
     String matchedColor;
     String matchedColorHex;
     double matchedConfidence;
-    ShuffleboardRGB rawColor = new ShuffleboardRGB(Shuffleboard.getTab("TheTab"), "isIsAName");
+    ShuffleboardRGB rawColor = new ShuffleboardRGB();
     String rawColorHex;
     String rawColorFloat;
 
+    boolean directionToYellow;
+    boolean directionToBlue;
+    boolean directionToRed;
+
     public enum Colors {
         // Clockwise order
-        Yellow(0, 0, 0), Blue(0, 0, 0), Red(0, 0, 0);
+        Yellow(0.4182, 0.4880, 0.0938), Blue(0.3318, 0.4846, 0.1833), Red(0.5427, 0.3589, 0.0984);
 
         public final Color color;
         public final String hex;
@@ -46,6 +50,14 @@ public class ColorSensor extends SubsystemBase {
 
             public MatchResult(Color measured) {
                 ColorMatchResult result = colorMatch.matchClosestColor(measured);
+
+                if (result.confidence == 0) {
+                    // We are in simulation: measured color == Black
+                    color = Colors.Red; // idk
+                    confidence = 0;
+                    return;
+                }
+
                 color = conversionDict.get(result.color);
                 confidence = result.confidence;
 
@@ -70,7 +82,9 @@ public class ColorSensor extends SubsystemBase {
         }
     }
 
-    public ColorSensor() {}
+    public ColorSensor() {
+        periodic();
+    }
 
     public final void periodic() {
         final Color measured;
@@ -88,9 +102,13 @@ public class ColorSensor extends SubsystemBase {
         matchedColorHex = currentColor.hex;
 
         rawColor.setColor(rawColorHex);
+
+        directionToBlue = calculateDirection(Colors.Blue);
+        directionToYellow = calculateDirection(Colors.Yellow);
+        directionToRed = calculateDirection(Colors.Red);
     }
 
-    public static boolean calculateDirection(Colors currentColor, Colors wantedColor) {
+    public boolean calculateDirection(Colors wantedColor) {
         // TODO: color offset - field sensor not same position as robot sensor
         // true = clockwise
         final int difference = wantedColor.ordinal() - currentColor.ordinal();

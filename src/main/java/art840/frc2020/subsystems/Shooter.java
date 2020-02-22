@@ -1,6 +1,7 @@
 package art840.frc2020.subsystems;
 
 import art840.frc2020.map.Map;
+import art840.frc2020.util.FileIO.CachedFile;
 import art840.frc2020.util.SparkMaxFactory;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
@@ -8,6 +9,7 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.SlewRateLimiter;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -43,6 +45,9 @@ public class Shooter extends SubsystemBase {
     ShuffleboardLayout motorTelemetry;
     double voltage;
 
+    CachedFile file;
+    Timer timer = new Timer();
+
     public Shooter() {
         this(Map.map.getShooterConfig());
     }
@@ -62,10 +67,7 @@ public class Shooter extends SubsystemBase {
         pid = new PIDController(config.kP, 0, 0);
         ramp = new SlewRateLimiter(1 / config.rampTime);
 
-        var tab = Shuffleboard.getTab("Shooter");
-        tab.add("Encoder", encoder);
-
-        motorTelemetry = tab.getLayout("Motor", BuiltInLayouts.kList);
+        motorTelemetry = Shuffleboard.getTab("Shooter").getLayout("Motor", BuiltInLayouts.kList);
         motorTelemetry.addNumber("Voltage", () -> voltage);
         motorTelemetry.addNumber("Output", motor::get);
         motorTelemetry.addNumber("RPM", this::getRPM);
@@ -94,12 +96,34 @@ public class Shooter extends SubsystemBase {
         setVoltage(Math.max(0, output));
     }
 
-    public void off() {
+    public final void off() {
         // No ramp down: just turn off power and go into coast
         // But still run calculations so can 'resume' ramp
         ramp.calculate(0);
         pid.calculate(getRPM(), 0);
 
         setVoltage(0);
+    }
+
+    public final void beginLogging() {
+        file = new CachedFile("shooter.csv");
+        file.println("Time,Voltage,Output,RPM,targetRPM=", config.speedRPM, ",rampTime=",
+                config.rampTime, ",kP=", config.kP, ",constantFF=", config.constantFF);
+        timer.reset();
+        timer.start();
+    }
+
+    public final void endLogging() {
+        timer.stop();
+        if (file != null) {
+            file.flush();
+            file = null;
+        }
+    }
+
+    public final void periodic() {
+        if (file != null) {
+            file.println(timer.get(), ",", voltage, ",", motor.get(), ",", getRPM());
+        }
     }
 }
