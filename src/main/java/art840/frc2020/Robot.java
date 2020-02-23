@@ -9,6 +9,7 @@ import art840.frc2020.subsystems.Lift;
 import art840.frc2020.subsystems.Limelight;
 import art840.frc2020.subsystems.Server;
 import art840.frc2020.subsystems.Shooter;
+import art840.frc2020.subsystems.Turret;
 import art840.frc2020.subsystems.WheelSpinner;
 import art840.frc2020.util.InstantCommandDisabled;
 import art840.frc2020.util.NavX;
@@ -32,6 +33,7 @@ public class Robot extends RobotBase {
     public static WheelSpinner wheelSpinner = new WheelSpinner();
     public static ColorSensor colorSensor = new ColorSensor();
     public static Shooter shooter = new Shooter();
+    public static Turret turret = new Turret();
     public static Limelight limelight = new Limelight();
     public static Joystick joystick = Map.map.getJoystick();
     public static Server server = new Server();
@@ -95,10 +97,12 @@ public class Robot extends RobotBase {
         waitAndCoast.schedule();
         shooter.reset();
         shooter.endLogging();
+        turret.off();
     }
 
     @Override
     public void teleopPeriodic() {
+        turret.on();
         // NetworkTableInstance.getDefault().flush();
         // shooter.on();
     }
