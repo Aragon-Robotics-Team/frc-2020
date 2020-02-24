@@ -5,6 +5,7 @@ import art840.frc2020.oi.Joystick;
 import art840.frc2020.subsystems.Drivetrain;
 import art840.frc2020.subsystems.Lift;
 import art840.frc2020.subsystems.Shooter;
+import art840.frc2020.subsystems.Turret;
 import art840.frc2020.subsystems.WheelSpinner;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
@@ -88,6 +89,27 @@ public class TestMap extends Map {
 
                 kP = 0.0; // no good kP found: too noisy at any value
                 constantFF = 7.9;
+            }
+        };
+    }
+
+    public Turret.Config getTurretConfig() {
+        return new Turret.Config() {
+            {
+                motor = 7;
+                invert = false;
+
+                quadratureResolution = 4096;
+                invertEncoder = true;
+
+                gearRatio = 18. / 120.;
+
+                feedforward = new SimpleMotorFeedforward(0.7375, 2.185, 0.0901);
+                velocityPID.kP = 1;
+                velocityPID.kD = 0;
+
+                maxVelocity = 0.5;
+                maxAcceleration = 1;
             }
         };
     }

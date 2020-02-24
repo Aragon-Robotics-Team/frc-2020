@@ -1,81 +1,103 @@
 package art840.frc2020.subsystems;
 
-import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import static java.util.Objects.requireNonNull;
+
+import art840.frc2020.map.Map;
+import art840.frc2020.util.InstantCommandDisabled;
+import art840.frc2020.util.TalonSRXWrapper;
+import com.ctre.phoenix.motorcontrol.can.SlotConfiguration;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.controller.ProfiledPIDController;
+import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
+import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import java.util.function.BooleanSupplier;
+import io.github.oblarg.oblog.Loggable;
+import io.github.oblarg.oblog.annotations.Log;
 
-public class Turret extends SubsystemBase {
-    final TalonSRX motor;
+public class Turret extends SubsystemBase implements Loggable {
+    public static class Config {
+        public int motor;
+        public boolean invert = false;
 
-    double voltage;
+        public int quadratureResolution;
+        public boolean invertEncoder;
 
-    BooleanSupplier invert;
+        public double gearRatio = 1;
+
+        public SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(0, 1);
+        public SlotConfiguration velocityPID = new SlotConfiguration();
+
+        public double maxVelocity; // rps
+        public double maxAcceleration;
+
+        private final void verify() {
+            requireNonNull(feedforward);
+            requireNonNull(velocityPID);
+        }
+    }
+
+    final Config config;
+    final TalonSRXWrapper motor;
+
+    @Log
+    double pidOutput;
+    @Log
+    double ffOutput;
+    @Log
+    double netOutput;
+
+    private final ProfiledPIDController pid;
 
     public Turret() {
-        motor = new TalonSRX(7);
-        motor.clearStickyFaults();
-
-        var motorconfig = new TalonSRXConfiguration();
-
-        motorconfig.openloopRamp = 0.2;
-        motorconfig.closedloopRamp = 0.2;
-        motorconfig.voltageCompSaturation = 12;
-
-        motor.configAllSettings(motorconfig);
-
-        motor.setInverted(false);
-        motor.setSensorPhase(false);
-        motor.setNeutralMode(NeutralMode.Coast);
-        motor.selectProfileSlot(0, 0);
-        motor.enableVoltageCompensation(true);
-        motor.setSelectedSensorPosition(0);
-
-        var motorTelemetry = Shuffleboard.getTab("Turret").getLayout("Motor", BuiltInLayouts.kList);
-        motorTelemetry.addNumber("Voltage", () -> voltage);
-        motorTelemetry.addNumber("Output", motor::getMotorOutputPercent);
-        motorTelemetry.addNumber("RPM", this::getRPM);
-        motorTelemetry.addNumber("Position", this::getPosition);
-        var entry = motorTelemetry.add("Invert", false).withWidget(BuiltInWidgets.kToggleSwitch)
-                .getEntry();
-        invert = () -> entry.getBoolean(false);
+        this(Map.map.getTurretConfig());
     }
 
-    private final double toRotations(int val) {
-        return (((double) val) // encoder ticks
-                / 4096) // rotations of gearbox
-                * 18 / 120; // sprocket reduction
+    public Turret(final Config _config) {
+        config = _config;
+        config.verify();
+
+        motor = new TalonSRXWrapper(new TalonSRXWrapper.Config() {
+            {
+                port = config.motor;
+                invert = config.invert;
+                invertEncoder = config.invertEncoder;
+                encoderResolution = config.quadratureResolution;
+                gearRatio = config.gearRatio;
+            }
+        });
+
+        pid = new ProfiledPIDController(config.velocityPID.kP, config.velocityPID.kI,
+                config.velocityPID.kD,
+                new TrapezoidProfile.Constraints(config.maxVelocity, config.maxAcceleration));
     }
 
-    public final double getPosition() {
-        return toRotations(motor.getSelectedSensorPosition());
+    @io.github.oblarg.oblog.annotations.Config
+    final void pos(double val) {
+        pos = val;
     }
 
-    public final double getRPM() {
-        return toRotations(motor.getSelectedSensorVelocity()) // rotations / 100ms
-                * 10 // units / second
-                * 60; // units / min
+    double pos;
+
+    // public final void setPosition(double pos) {
+    public final void periodic() {
+        if (DriverStation.getInstance().isDisabled()) {
+            reset();
+            return;
+        }
+
+        pidOutput = pid.calculate(motor.getPosition(), pos);
+        ffOutput = config.feedforward.calculate(pid.getSetpoint().velocity);
+        netOutput = pidOutput + ffOutput;
+
+        motor.setVoltage(netOutput);
     }
 
-    public final void setVoltage(double voltage) {
-        this.voltage = voltage;
-        motor.set(TalonSRXControlMode.PercentOutput, voltage / 12.0);
-    }
+    @Log
+    Command reset = new InstantCommandDisabled(this::reset, this);
 
     public final void reset() {
-        setVoltage(0);
-    }
-
-    public final void on() {
-        setVoltage(2 * (invert.getAsBoolean() ? -1 : 1));
-    }
-
-    public final void off() {
-        setVoltage(0);
+        pid.reset(motor.getPosition());
+        motor.setVoltage(0);
     }
 }

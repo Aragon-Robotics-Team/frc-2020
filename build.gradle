@@ -64,7 +64,7 @@ dependencies {
     compile "org.mockito:mockito-core:2.+"
     compile "io.javalin:javalin:3.7.0"
     compile "org.slf4j:slf4j-nop:1.7.28"
-    compile "com.github.Oblarg.Oblog:lib:3.1.0"
+    compile "com.github.Oblarg.Oblog:lib:3.1.1"
 }
 
 // Setting up my Jar File. In this case, adding all libraries into the main jar ('fat jar')

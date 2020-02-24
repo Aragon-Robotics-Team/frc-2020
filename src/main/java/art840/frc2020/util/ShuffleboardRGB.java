@@ -12,12 +12,22 @@ public class ShuffleboardRGB implements Loggable {
 
     private SimpleWidgetWrapper widget;
 
+    private final String name;
+
+    public ShuffleboardRGB(String _name) {
+        name = _name;
+    }
+
     public final boolean skipLayout() {
         return true;
     }
 
     public final void addCustomLogging(ShuffleboardContainerWrapper tab) {
-        widget = tab.add("A", false).withWidget(BuiltInWidgets.kBooleanBox.getWidgetName());
+        if (widget != null) {
+            return;
+        }
+
+        widget = tab.add(name, false).withWidget(BuiltInWidgets.kBooleanBox.getWidgetName());
         setColor("#000000");
     }
 

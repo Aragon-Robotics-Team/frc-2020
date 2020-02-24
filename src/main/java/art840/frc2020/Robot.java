@@ -67,7 +67,7 @@ public class Robot extends RobotBase {
         NavX.ahrs.reset();
         drivetrain.odometry.resetAll();
 
-        Logger.configureLogging(this);
+        Logger.configureLoggingAndConfig(this, false);
     }
 
     @Override
@@ -97,12 +97,10 @@ public class Robot extends RobotBase {
         waitAndCoast.schedule();
         shooter.reset();
         shooter.endLogging();
-        turret.off();
     }
 
     @Override
     public void teleopPeriodic() {
-        turret.on();
         // NetworkTableInstance.getDefault().flush();
         // shooter.on();
     }

@@ -20,7 +20,7 @@ public class ColorSensor extends SubsystemBase implements Loggable {
     String matchedColor;
     String matchedColorHex;
     double matchedConfidence;
-    ShuffleboardRGB rawColor = new ShuffleboardRGB();
+    ShuffleboardRGB rawColor = new ShuffleboardRGB("rawColor");
     String rawColorHex;
     String rawColorFloat;
 
