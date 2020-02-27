@@ -1,4 +1,4 @@
-package frc.robot.oi;
+package art840.frc2020.oi;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Sendable;
@@ -16,6 +16,11 @@ public class OI implements Sendable {
     public OI(final int _port) {
         port = _port;
         setup();
+    }
+
+    public OI() {
+        // Null OI
+        port = -1;
     }
 
     protected void setup() {}

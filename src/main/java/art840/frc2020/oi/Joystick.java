@@ -1,8 +1,12 @@
-package frc.robot.oi;
+package art840.frc2020.oi;
 
 public class Joystick extends OI {
     public Joystick(final int port) {
         super(port);
+    }
+
+    public Joystick() {
+        super();
     }
 
     public double getThrottle() {

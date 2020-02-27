@@ -1,4 +1,4 @@
-package frc.robot.util;
+package art840.frc2020.util;
 
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
 
@@ -58,5 +58,9 @@ public class Tuple {
 
     public DifferentialDriveWheelSpeeds get() {
         return new DifferentialDriveWheelSpeeds(left, right);
+    }
+
+    public final String toString() {
+        return String.format("(% 2.2f, % 2.2f)", left, right);
     }
 }

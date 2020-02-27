@@ -1,4 +1,4 @@
-package frc.robot.util;
+package art840.frc2020.util;
 
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.SPI;
@@ -8,7 +8,7 @@ public class NavX {
     private NavX() {}
 
     public static final byte updateRate = 100;
-    public static final boolean invert = false; // TODO: ensure left turn is positive angle
+    public static final boolean invert = false;
 
     public static AHRS ahrs = new AHRS(SPI.Port.kMXP, updateRate);
     public static final double invertConst = invert ? -1 : 1;
@@ -19,6 +19,8 @@ public class NavX {
         return Rotation2d.fromDegrees(ahrs.getYaw() * invertConst);
     }
 
+    // TODO: is this accurate?
+    // https://github.com/kauailabs/navxmxp/issues/69
     public static double getRate() {
         return ahrs.getRate() * invertConst;
     }
