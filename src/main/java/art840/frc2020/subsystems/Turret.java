@@ -2,7 +2,6 @@ package art840.frc2020.subsystems;
 
 import static java.util.Objects.requireNonNull;
 
-import art840.frc2020.Robot;
 import art840.frc2020.map.Map;
 import art840.frc2020.util.InstantCommandDisabled;
 import art840.frc2020.util.TalonSRXWrapper;
@@ -90,7 +89,19 @@ public class Turret extends SubsystemBase implements Loggable {
             return;
         }
 
-        pos = Robot.joystick.getThrottle() * 0.4;
+        Limelight readLimeLight = new Limelight();
+
+        if (readLimeLight.tv == true) {
+            if (readLimeLight.tx > 0) {
+                pos = (readLimeLight.tx / 29.8) * 0.4;
+            } else if (readLimeLight.tx < 0) {
+                pos = (readLimeLight.tx / 29.8) * 0.4;
+            } else {
+                pos = 0;
+            }
+        }
+
+        // pos = Robot.joystick.getThrottle() * 0.4;
 
         pidOutput = pid.calculate(motor.getPosition(), pos);
         if (pid.atSetpoint()) {

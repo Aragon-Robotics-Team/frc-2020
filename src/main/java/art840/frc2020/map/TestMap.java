@@ -106,12 +106,12 @@ public class TestMap extends Map {
 
                 feedforward = new SimpleMotorFeedforward(0., 2.185, 0.0901);
                 // feedforward = new SimpleMotorFeedforward(0., 0., 0.);
-                velocityPID.kP = 4;
-                velocityPID.kD = 1;
+                velocityPID.kP = 10;
+                velocityPID.kD = 0.3;
 
                 kS = 0.7375;
 
-                maxVelocity = 8;
+                maxVelocity = 6;
                 maxAcceleration = 12;
             }
         };
