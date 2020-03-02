@@ -2,6 +2,7 @@ package art840.frc2020.map;
 
 import art840.frc2020.oi.Joystick;
 import art840.frc2020.subsystems.Drivetrain;
+import art840.frc2020.subsystems.Hopper;
 import art840.frc2020.subsystems.Lift;
 import art840.frc2020.subsystems.Shooter;
 import art840.frc2020.subsystems.Turret;
@@ -20,6 +21,8 @@ public abstract class Map {
 
     public abstract Shooter.Config getShooterConfig();
 
+    public abstract Hopper.Config getHopperConfig();
+    
     public abstract Turret.Config getTurretConfig();
 
     public abstract int getPCMId();
