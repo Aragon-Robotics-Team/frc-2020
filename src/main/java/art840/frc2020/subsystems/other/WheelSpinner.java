@@ -1,4 +1,4 @@
-package art840.frc2020.subsystems;
+package art840.frc2020.subsystems.other;
 
 import art840.frc2020.map.Map;
 import art840.frc2020.util.InstantCommandDisabled;
@@ -19,7 +19,7 @@ public class WheelSpinner extends SubsystemBase {
     }
 
     public WheelSpinner() {
-        this(Map.map.getWheelSpinnerConfig());
+        this(Map.map.other.wheelSpinner);
     }
 
     public WheelSpinner(final Config _config) {

@@ -455,7 +455,7 @@ public final class Drivetrain extends SubsystemBase {
     public final TrajectoryConfigGen configGen;
 
     public Drivetrain() {
-        this(art840.frc2020.map.Map.map.getDrivetrainConfig());
+        this(art840.frc2020.map.Map.map.drivetrain);
     }
 
     public Drivetrain(final Config _config) {

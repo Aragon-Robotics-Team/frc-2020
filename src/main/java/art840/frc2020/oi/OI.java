@@ -15,12 +15,19 @@ public class OI implements Sendable {
 
     public OI(final int _port) {
         port = _port;
-        setup();
     }
 
     public OI() {
         // Null OI
         port = -1;
+    }
+
+    public final void _setup() {
+        setup();
+
+        for (OI child : children) {
+            child._setup();
+        }
     }
 
     protected void setup() {}

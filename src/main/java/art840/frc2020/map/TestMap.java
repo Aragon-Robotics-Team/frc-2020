@@ -1,23 +1,22 @@
 package art840.frc2020.map;
 
 import art840.frc2020.oi.GenericController;
-import art840.frc2020.oi.Joystick;
 import art840.frc2020.subsystems.Drivetrain;
-import art840.frc2020.subsystems.Lift;
-import art840.frc2020.subsystems.Shooter;
-import art840.frc2020.subsystems.Turret;
-import art840.frc2020.subsystems.WheelSpinner;
+import art840.frc2020.subsystems.hopper.Funnel;
+import art840.frc2020.subsystems.hopper.Hood;
+import art840.frc2020.subsystems.hopper.Shooter;
+import art840.frc2020.subsystems.hopper.Turret;
+import art840.frc2020.subsystems.intake.Climb;
+import art840.frc2020.subsystems.other.WheelSpinner;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.util.Units;
 
 public class TestMap extends Map {
-    public Joystick getJoystick() {
-        return new GenericController(0);
-    }
+    public TestMap() {
+        joystick = new GenericController(0);
 
-    public Drivetrain.Config getDrivetrainConfig() {
-        return new Drivetrain.Config() {
+        drivetrain = new Drivetrain.Config() {
             {
                 leftMotor = 2;
                 rightMotor = 5;
@@ -50,30 +49,18 @@ public class TestMap extends Map {
                 teleopRotationalSlew = 4 * Math.PI;
             }
         };
-    }
 
-    public Lift.Config getLiftConfig() {
-        return new Lift.Config() {
+        hopper.funnel = new Funnel.Config() {
             {
-                solenoidFwd = 1;
-                solenoidRev = 0;
             }
         };
-    }
 
-    public WheelSpinner.Config getWheelSpinnerConfig() {
-        return new WheelSpinner.Config() {
+        hopper.hood = new Hood.Config() {
             {
-                motorControllerPort = 3;
-                maxSpeed = 0.5;
-                rampTime = 0.5;
-                invert = true;
             }
         };
-    }
 
-    public Shooter.Config getShooterConfig() {
-        return new Shooter.Config() {
+        hopper.shooter = new Shooter.Config() {
             {
                 // All values temporary, just guessing
                 motorPort = 3;
@@ -91,10 +78,13 @@ public class TestMap extends Map {
                 constantFF = 7.9;
             }
         };
-    }
 
-    public Turret.Config getTurretConfig() {
-        return new Turret.Config() {
+        hopper.turret = new Turret.Config() {
+            {
+            }
+        };
+
+        hopper.turret = new Turret.Config() {
             {
                 motor = 7;
                 invert = false;
@@ -115,9 +105,23 @@ public class TestMap extends Map {
                 maxAcceleration = 12;
             }
         };
-    }
 
-    public int getPCMId() {
-        return 1;
+        intake.climb = new Climb.Config() {
+            {
+                solenoidFwd = 1;
+                solenoidRev = 0;
+            }
+        };
+
+        other.wheelSpinner = new WheelSpinner.Config() {
+            {
+                motorControllerPort = 3;
+                maxSpeed = 0.5;
+                rampTime = 0.5;
+                invert = true;
+            }
+        };
+
+        other.pcmId = 1;
     }
 }

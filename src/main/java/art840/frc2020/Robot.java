@@ -3,14 +3,10 @@ package art840.frc2020;
 import art840.frc2020.commands.drivetrain.auto.FollowTrajectory;
 import art840.frc2020.map.Map;
 import art840.frc2020.oi.Joystick;
-import art840.frc2020.subsystems.ColorSensor;
 import art840.frc2020.subsystems.Drivetrain;
-import art840.frc2020.subsystems.Lift;
-import art840.frc2020.subsystems.Limelight;
-import art840.frc2020.subsystems.Server;
-import art840.frc2020.subsystems.Shooter;
-import art840.frc2020.subsystems.Turret;
-import art840.frc2020.subsystems.WheelSpinner;
+import art840.frc2020.subsystems.hopper.Hopper;
+import art840.frc2020.subsystems.intake.Intake;
+import art840.frc2020.subsystems.other.Other;
 import art840.frc2020.util.InstantCommandDisabled;
 import art840.frc2020.util.NavX;
 import art840.frc2020.util.RobotBase;
@@ -29,14 +25,10 @@ import java.util.List;
 
 public class Robot extends RobotBase {
     public static Drivetrain drivetrain = new Drivetrain();
-    public static Lift lift = new Lift();
-    public static WheelSpinner wheelSpinner = new WheelSpinner();
-    public static ColorSensor colorSensor = new ColorSensor();
-    public static Shooter shooter = new Shooter();
-    public static Turret turret = new Turret();
-    public static Limelight limelight = new Limelight();
-    public static Joystick joystick = Map.map.getJoystick();
-    public static Server server = new Server();
+    public static Hopper hopper = new Hopper();
+    public static Intake intake = new Intake();
+    public static Other other = new Other();
+    public static Joystick joystick = Map.map.joystick;
 
     Command waitAndCoast = new WaitCommand(5)
             .andThen(new InstantCommandDisabled(() -> drivetrain.setBrake(false)));
@@ -57,6 +49,8 @@ public class Robot extends RobotBase {
 
     @Override
     public void robotInit() {
+        joystick._setup();
+
         // addAuto("Test");
         // addAuto("ASDF");
         // addAuto("FWD");
@@ -72,9 +66,9 @@ public class Robot extends RobotBase {
 
     @Override
     public void teleopInit() {
-        shooter.reset();
-        shooter.beginLogging();
-        (new RunCommand(shooter::on, shooter)).schedule();
+        hopper.shooter.reset();
+        hopper.shooter.beginLogging();
+        (new RunCommand(hopper.shooter::on, hopper.shooter)).schedule();
 
         waitAndCoast.cancel();
         drivetrain.setBrake(true);
@@ -95,8 +89,8 @@ public class Robot extends RobotBase {
     @Override
     public void disabledInit() {
         waitAndCoast.schedule();
-        shooter.reset();
-        shooter.endLogging();
+        hopper.shooter.reset();
+        hopper.shooter.endLogging();
     }
 
     @Override

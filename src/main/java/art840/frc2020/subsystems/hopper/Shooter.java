@@ -1,4 +1,4 @@
-package art840.frc2020.subsystems;
+package art840.frc2020.subsystems.hopper;
 
 import art840.frc2020.map.Map;
 import art840.frc2020.util.FileIO.CachedFile;
@@ -49,7 +49,7 @@ public class Shooter extends SubsystemBase {
     Timer timer = new Timer();
 
     public Shooter() {
-        this(Map.map.getShooterConfig());
+        this(Map.map.hopper.shooter);
     }
 
     public Shooter(final Config _config) {

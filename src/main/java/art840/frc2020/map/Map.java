@@ -2,28 +2,41 @@ package art840.frc2020.map;
 
 import art840.frc2020.oi.Joystick;
 import art840.frc2020.subsystems.Drivetrain;
-import art840.frc2020.subsystems.Hopper;
-import art840.frc2020.subsystems.Lift;
-import art840.frc2020.subsystems.Shooter;
-import art840.frc2020.subsystems.Turret;
-import art840.frc2020.subsystems.WheelSpinner;
+import art840.frc2020.subsystems.hopper.Funnel;
+import art840.frc2020.subsystems.hopper.Hood;
+import art840.frc2020.subsystems.hopper.Shooter;
+import art840.frc2020.subsystems.hopper.Tower;
+import art840.frc2020.subsystems.hopper.Turret;
+import art840.frc2020.subsystems.intake.Climb;
+import art840.frc2020.subsystems.other.WheelSpinner;
 
-public abstract class Map {
+public class Map {
     public static final Map map = new TestMap();
 
-    public abstract Joystick getJoystick();
+    public Joystick joystick;
 
-    public abstract Drivetrain.Config getDrivetrainConfig();
+    public Drivetrain.Config drivetrain;
 
-    public abstract Lift.Config getLiftConfig();
+    public static class Hopper {
+        public Funnel.Config funnel;
+        public Hood.Config hood;
+        public Shooter.Config shooter;
+        public Tower.Config tower;
+        public Turret.Config turret;
+    }
 
-    public abstract WheelSpinner.Config getWheelSpinnerConfig();
+    public Hopper hopper = new Hopper();
 
-    public abstract Shooter.Config getShooterConfig();
+    public static class Intake {
+        public Climb.Config climb;
+    }
 
-    public abstract Hopper.Config getHopperConfig();
-    
-    public abstract Turret.Config getTurretConfig();
+    public Intake intake = new Intake();
 
-    public abstract int getPCMId();
+    public static class Other {
+        public WheelSpinner.Config wheelSpinner;
+        public int pcmId;
+    }
+
+    public Other other = new Other();
 }

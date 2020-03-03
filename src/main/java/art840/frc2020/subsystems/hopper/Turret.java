@@ -1,4 +1,4 @@
-package art840.frc2020.subsystems;
+package art840.frc2020.subsystems.hopper;
 
 import static java.util.Objects.requireNonNull;
 
@@ -52,7 +52,7 @@ public class Turret extends SubsystemBase implements Loggable {
     private final ProfiledPIDController pid;
 
     public Turret() {
-        this(Map.map.getTurretConfig());
+        this(Map.map.hopper.turret);
     }
 
     public Turret(final Config _config) {
@@ -88,31 +88,24 @@ public class Turret extends SubsystemBase implements Loggable {
             reset();
             return;
         }
-
-        Limelight readLimeLight = new Limelight();
-
-        if (readLimeLight.tv == true) {
-            if (readLimeLight.tx > 0) {
-                pos = (readLimeLight.tx / 29.8) * 0.4;
-            } else if (readLimeLight.tx < 0) {
-                pos = (readLimeLight.tx / 29.8) * 0.4;
-            } else {
-                pos = 0;
-            }
-        }
-
-        // pos = Robot.joystick.getThrottle() * 0.4;
-
-        pidOutput = pid.calculate(motor.getPosition(), pos);
-        if (pid.atSetpoint()) {
-            pidOutput = 0.;
-        }
-        ffOutput = config.feedforward.calculate(pid.getSetpoint().velocity);
-        netOutput = pidOutput + ffOutput;
-
-        netOutput += Math.signum(netOutput) * config.kS;
-
-        motor.setVoltage(netOutput);
+        /*
+         *
+         * Limelight readLimeLight = new Limelight();
+         *
+         * if (readLimeLight.tv == true) { if (readLimeLight.tx > 0) { pos = (readLimeLight.tx /
+         * 29.8) * 0.4; } else if (readLimeLight.tx < 0) { pos = (readLimeLight.tx / 29.8) * 0.4; }
+         * else { pos = 0; } }
+         *
+         * // pos = Robot.joystick.getThrottle() * 0.4;
+         *
+         * pidOutput = pid.calculate(motor.getPosition(), pos); if (pid.atSetpoint()) { pidOutput =
+         * 0.; } ffOutput = config.feedforward.calculate(pid.getSetpoint().velocity); netOutput =
+         * pidOutput + ffOutput;
+         *
+         * netOutput += Math.signum(netOutput) * config.kS;
+         *
+         * motor.setVoltage(netOutput);
+         */
     }
 
     @Log

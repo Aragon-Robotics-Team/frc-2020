@@ -9,7 +9,7 @@ public class DrivetrainAiming extends CommandBase {
     }
 
     public void execute() {
-        if (!Robot.limelight.tv) {
+        if (!Robot.other.limelight.tv) {
             return;
         }
 
