@@ -1,4 +1,4 @@
-package art840.frc2020.subsystems.hopper;
+package art840.frc2020.subsystems.shooter;
 
 import art840.frc2020.map.Map;
 import art840.frc2020.util.FileIO.CachedFile;
@@ -16,7 +16,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class Shooter extends SubsystemBase {
+public class Flywheel extends SubsystemBase {
     public static class Config {
         public int motorPort;
         public boolean motorInvert;
@@ -48,11 +48,11 @@ public class Shooter extends SubsystemBase {
     CachedFile file;
     Timer timer = new Timer();
 
-    public Shooter() {
-        this(Map.map.hopper.shooter);
+    public Flywheel() {
+        this(Map.map.shooter.flywheel);
     }
 
-    public Shooter(final Config _config) {
+    public Flywheel(final Config _config) {
         config = _config;
 
         motor = SparkMaxFactory.createMaster(config.motorPort, MotorType.kBrushed);
@@ -67,7 +67,7 @@ public class Shooter extends SubsystemBase {
         pid = new PIDController(config.kP, 0, 0);
         ramp = new SlewRateLimiter(1 / config.rampTime);
 
-        motorTelemetry = Shuffleboard.getTab("Shooter").getLayout("Motor", BuiltInLayouts.kList);
+        motorTelemetry = Shuffleboard.getTab("Flywheel").getLayout("Motor", BuiltInLayouts.kList);
         motorTelemetry.addNumber("Voltage", () -> voltage);
         motorTelemetry.addNumber("Output", motor::get);
         motorTelemetry.addNumber("RPM", this::getRPM);

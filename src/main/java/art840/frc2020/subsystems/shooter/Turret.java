@@ -1,4 +1,4 @@
-package art840.frc2020.subsystems.hopper;
+package art840.frc2020.subsystems.shooter;
 
 import static java.util.Objects.requireNonNull;
 
@@ -52,7 +52,7 @@ public class Turret extends SubsystemBase implements Loggable {
     private final ProfiledPIDController pid;
 
     public Turret() {
-        this(Map.map.hopper.turret);
+        this(Map.map.shooter.turret);
     }
 
     public Turret(final Config _config) {

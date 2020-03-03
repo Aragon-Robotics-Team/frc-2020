@@ -1,4 +1,4 @@
-package art840.frc2020.subsystems.hopper;
+package art840.frc2020.subsystems.shooter;
 
 import art840.frc2020.map.Map;
 
@@ -15,7 +15,7 @@ public class Hood {
     private Position position;
 
     public Hood() {
-        this(Map.map.hopper.hood);
+        this(Map.map.shooter.hood);
     }
 
     public Hood(Config _config) {

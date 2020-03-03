@@ -4,7 +4,7 @@ import art840.frc2020.oi.GenericController;
 import art840.frc2020.subsystems.Drivetrain;
 import art840.frc2020.subsystems.hopper.Funnel;
 import art840.frc2020.subsystems.hopper.Hood;
-import art840.frc2020.subsystems.hopper.Shooter;
+import art840.frc2020.subsystems.shooter.flywheel;
 import art840.frc2020.subsystems.hopper.Turret;
 import art840.frc2020.subsystems.intake.Climb;
 import art840.frc2020.subsystems.other.WheelSpinner;
@@ -60,7 +60,7 @@ public class TestMap extends Map {
             }
         };
 
-        hopper.shooter = new Shooter.Config() {
+        shooter.flywheel = new Flywheel.Config() {
             {
                 // All values temporary, just guessing
                 motorPort = 3;

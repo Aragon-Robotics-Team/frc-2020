@@ -66,9 +66,9 @@ public class Robot extends RobotBase {
 
     @Override
     public void teleopInit() {
-        hopper.shooter.reset();
-        hopper.shooter.beginLogging();
-        (new RunCommand(hopper.shooter::on, hopper.shooter)).schedule();
+        shooter.flywheel.reset();
+        shooter.flywheel.beginLogging();
+        (new RunCommand(shooter.flywheel::on, shooter.flywheel)).schedule();
 
         waitAndCoast.cancel();
         drivetrain.setBrake(true);
@@ -89,8 +89,8 @@ public class Robot extends RobotBase {
     @Override
     public void disabledInit() {
         waitAndCoast.schedule();
-        hopper.shooter.reset();
-        hopper.shooter.endLogging();
+        shooter.flywheel.reset();
+        shooter.flywheel.endLogging();
     }
 
     @Override
