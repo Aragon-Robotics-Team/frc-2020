@@ -1,9 +1,9 @@
 package art840.frc2020.oi;
 
 import art840.frc2020.Robot;
-import art840.frc2020.commands.RotateToColor;
-import art840.frc2020.subsystems.other.ColorSensor.Colors;
+import art840.frc2020.subsystems.other.Climb.Position;
 import art840.frc2020.util.ScalingUtils;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 
 public class GenericController extends Joystick {
     // XBox controller, F310 controller, etc
@@ -60,9 +60,9 @@ public class GenericController extends Joystick {
     }
 
     protected final void setup() {
-        // getButton(Button.B).whenActive(() -> Robot.lift.sol.set(DoubleSolenoid.Value.kOff));
-        // getButton(Button.X).whenActive(() -> Robot.lift.sol.set(DoubleSolenoid.Value.kForward));
-        // getButton(Button.Y).whenActive(() -> Robot.lift.sol.set(DoubleSolenoid.Value.kReverse));
+        getButton(Button.X).whenActive(() -> Robot.other.climb.set(Position.In));
+        getButton(Button.Y)
+               .whenActive(() -> Robot.other.climb.set(Position.Out));
 
         // getButton(Button.X).whenActive(new
         // InstantCommandDisabled(FalconDashboard.instance::show));
@@ -73,9 +73,9 @@ public class GenericController extends Joystick {
         // getButton(Button.Y).whenActive(() -> Robot.wheelSpinner.set(false), Robot.wheelSpinner);
         // getButton(Button.A).whenActive(() -> Robot.wheelSpinner.stop(), Robot.wheelSpinner);
 
-        getButton(Button.X).whenActive(new RotateToColor(Colors.Blue));
-        getButton(Button.Y).whenActive(new RotateToColor(Colors.Yellow));
-        getButton(Button.B).whenActive(new RotateToColor(Colors.Red));
-        getButton(Button.A).whenActive(Robot.other.wheelSpinner.stopCommand());
+        // getButton(Button.X).whenActive(new RotateToColor(Colors.Blue));
+        // getButton(Button.Y).whenActive(new RotateToColor(Colors.Yellow));
+        // getButton(Button.B).whenActive(new RotateToColor(Colors.Red));
+        // getButton(Button.A).whenActive(Robot.other.wheelSpinner.stopCommand());
     }
 }

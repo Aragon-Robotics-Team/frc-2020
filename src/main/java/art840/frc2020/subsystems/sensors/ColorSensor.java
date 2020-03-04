@@ -1,4 +1,4 @@
-package art840.frc2020.subsystems.other;
+package art840.frc2020.subsystems.sensors;
 
 import art840.frc2020.util.ColorUtils;
 import art840.frc2020.util.ShuffleboardRGB;

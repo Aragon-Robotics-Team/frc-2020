@@ -39,7 +39,11 @@ public class TalonSRXWrapper implements Loggable {
         config = _config;
         encoderConstant = config.gearRatio / config.encoderResolution;
 
-        talon = new TalonSRX(config.port);
+        if (config.port >= 0) {
+            talon = new TalonSRX(config.port);
+        } else {
+            talon = Mock.mock(TalonSRX.class);
+        }
 
         talon.clearStickyFaults(timeoutMs);
         talon.configAllSettings(config, timeoutMs);

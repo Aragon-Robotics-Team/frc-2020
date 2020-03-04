@@ -7,6 +7,8 @@ import art840.frc2020.subsystems.Drivetrain;
 import art840.frc2020.subsystems.hopper.Hopper;
 import art840.frc2020.subsystems.intake.Intake;
 import art840.frc2020.subsystems.other.Other;
+import art840.frc2020.subsystems.sensors.Sensors;
+import art840.frc2020.subsystems.shooter.Shooter;
 import art840.frc2020.util.InstantCommandDisabled;
 import art840.frc2020.util.NavX;
 import art840.frc2020.util.RobotBase;
@@ -28,6 +30,8 @@ public class Robot extends RobotBase {
     public static Hopper hopper = new Hopper();
     public static Intake intake = new Intake();
     public static Other other = new Other();
+    public static Sensors sensors = new Sensors();
+    public static Shooter shooter = new Shooter();
     public static Joystick joystick = Map.map.joystick;
 
     Command waitAndCoast = new WaitCommand(5)

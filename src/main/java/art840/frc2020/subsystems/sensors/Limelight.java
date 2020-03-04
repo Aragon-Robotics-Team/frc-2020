@@ -1,4 +1,4 @@
-package art840.frc2020.subsystems.other;
+package art840.frc2020.subsystems.sensors;
 
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;

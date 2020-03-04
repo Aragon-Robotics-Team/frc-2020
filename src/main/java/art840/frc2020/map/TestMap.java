@@ -3,11 +3,14 @@ package art840.frc2020.map;
 import art840.frc2020.oi.GenericController;
 import art840.frc2020.subsystems.Drivetrain;
 import art840.frc2020.subsystems.hopper.Funnel;
-import art840.frc2020.subsystems.hopper.Hood;
-import art840.frc2020.subsystems.shooter.flywheel;
-import art840.frc2020.subsystems.hopper.Turret;
-import art840.frc2020.subsystems.intake.Climb;
+import art840.frc2020.subsystems.hopper.Tower;
+import art840.frc2020.subsystems.intake.Arm;
+import art840.frc2020.subsystems.intake.Rollers;
+import art840.frc2020.subsystems.other.Climb;
 import art840.frc2020.subsystems.other.WheelSpinner;
+import art840.frc2020.subsystems.shooter.Flywheel;
+import art840.frc2020.subsystems.shooter.Hood;
+import art840.frc2020.subsystems.shooter.Turret;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.util.Units;
@@ -52,10 +55,47 @@ public class TestMap extends Map {
 
         hopper.funnel = new Funnel.Config() {
             {
+                leftMotor = -1;
+                rightMotor = -1;
             }
         };
 
-        hopper.hood = new Hood.Config() {
+        hopper.tower = new Tower.Config() {
+            {
+                motorPort = -1;
+            }
+        };
+
+        intake.arm = new Arm.Config() {
+            {
+            }
+        };
+
+        intake.rollers = new Rollers.Config() {
+            {
+            }
+        };
+
+        other.climb = new Climb.Config() {
+            {
+                solenoidFwd = 1;
+                solenoidRev = 0;
+            }
+        };
+
+        other.wheelSpinner = new WheelSpinner.Config() {
+            {
+                motorControllerPort = -1;
+                // motorControllerPort = 3;
+                maxSpeed = 0.5;
+                rampTime = 0.5;
+                invert = true;
+            }
+        };
+
+        other.pcmId = 1;
+
+        shooter.hood = new Hood.Config() {
             {
             }
         };
@@ -63,7 +103,8 @@ public class TestMap extends Map {
         shooter.flywheel = new Flywheel.Config() {
             {
                 // All values temporary, just guessing
-                motorPort = 3;
+                motorPort = -1;
+                // motorPort = 3;
                 motorInvert = false;
 
                 encoderPortA = 0;
@@ -79,14 +120,10 @@ public class TestMap extends Map {
             }
         };
 
-        hopper.turret = new Turret.Config() {
+        shooter.turret = new Turret.Config() {
             {
-            }
-        };
-
-        hopper.turret = new Turret.Config() {
-            {
-                motor = 7;
+                motor = -1;
+                // motor = 7;
                 invert = false;
 
                 quadratureResolution = 4096;
@@ -105,23 +142,5 @@ public class TestMap extends Map {
                 maxAcceleration = 12;
             }
         };
-
-        intake.climb = new Climb.Config() {
-            {
-                solenoidFwd = 1;
-                solenoidRev = 0;
-            }
-        };
-
-        other.wheelSpinner = new WheelSpinner.Config() {
-            {
-                motorControllerPort = 3;
-                maxSpeed = 0.5;
-                rampTime = 0.5;
-                invert = true;
-            }
-        };
-
-        other.pcmId = 1;
     }
 }

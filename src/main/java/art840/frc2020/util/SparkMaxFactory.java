@@ -20,7 +20,7 @@ public class SparkMaxFactory {
 
         CANSparkMax spark;
 
-        if (RobotBase.isReal()) {
+        if (RobotBase.isReal() || port < 1) {
             spark = new CANSparkMax(port, type);
         } else {
             spark = Mock.mock(CANSparkMax.class);

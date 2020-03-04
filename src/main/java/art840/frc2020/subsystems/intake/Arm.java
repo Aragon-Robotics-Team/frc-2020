@@ -1,15 +1,15 @@
-package art840.frc2020.subsystems.shooter;
+package art840.frc2020.subsystems.intake;
 
 import art840.frc2020.map.Map;
 import art840.frc2020.util.SensorFactory;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 
-public class Hood {
+public class Arm {
     public static class Config {
         public int solenoidFwd;
         public int solenoidRev;
-        public boolean disabled = true;
+        public boolean disabled = false;
     }
 
     public static enum Position {
@@ -20,17 +20,18 @@ public class Hood {
     final DoubleSolenoid solenoid;
     private Position position;
 
-    public Hood() {
-        this(Map.map.shooter.hood);
+    public Arm() {
+        this(Map.map.intake.arm);
     }
 
-    public Hood(Config _config) {
+    public Arm(Config _config) {
         config = _config;
         if (!config.disabled) {
             solenoid = SensorFactory.createDoubleSolenoid(config.solenoidFwd, config.solenoidRev);
         } else {
             solenoid = null;
         }
+
         set(Position.In);
     }
 
