@@ -1,4 +1,4 @@
-package art840.frc2020.util;
+package art840.frc2020.util.hardware;
 
 import art840.frc2020.map.Map;
 import edu.wpi.first.wpilibj.DoubleSolenoid;

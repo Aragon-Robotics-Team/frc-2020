@@ -1,4 +1,4 @@
-package art840.frc2020.util;
+package art840.frc2020.util.hardware;
 
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.SPI;

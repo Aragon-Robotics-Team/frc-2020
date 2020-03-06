@@ -1,4 +1,4 @@
-package art840.frc2020.util;
+package art840.frc2020.util.telemetry;
 
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import io.github.oblarg.oblog.Loggable;

@@ -3,7 +3,7 @@ package art840.frc2020.oi;
 import art840.frc2020.Robot;
 import art840.frc2020.commands.Shoot;
 import art840.frc2020.subsystems.other.Climb.Position;
-import art840.frc2020.util.ScalingUtils;
+import art840.frc2020.util.math.ScalingUtils;
 
 public class GenericController extends Joystick {
     // XBox controller, F310 controller, etc

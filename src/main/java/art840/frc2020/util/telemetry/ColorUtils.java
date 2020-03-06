@@ -1,4 +1,4 @@
-package art840.frc2020.util;
+package art840.frc2020.util.telemetry;
 
 import com.revrobotics.ColorSensorV3;
 import edu.wpi.first.wpilibj.util.Color;

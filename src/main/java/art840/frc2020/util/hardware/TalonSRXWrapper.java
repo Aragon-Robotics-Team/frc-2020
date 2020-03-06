@@ -1,5 +1,6 @@
-package art840.frc2020.util;
+package art840.frc2020.util.hardware;
 
+import art840.frc2020.util.Mock;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;

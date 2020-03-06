@@ -1,9 +1,11 @@
 package art840.frc2020.subsystems.intake;
 
 import art840.frc2020.map.Map;
-import art840.frc2020.util.SparkMaxFactory;
+import art840.frc2020.util.commands.RunEndCommand;
+import art840.frc2020.util.hardware.SparkMaxFactory;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Rollers extends SubsystemBase {
@@ -48,5 +50,9 @@ public class Rollers extends SubsystemBase {
         config = _config;
 
         motors = new Motors();
+    }
+
+    public Command setOnCommand() {
+        return new RunEndCommand(motors::setOn, motors::setZero, this);
     }
 }

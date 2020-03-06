@@ -1,5 +1,7 @@
-package art840.frc2020.util;
+package art840.frc2020.util.hardware;
 
+import art840.frc2020.util.Mock;
+import art840.frc2020.util.RobotBase;
 import com.ctre.phoenix.motorcontrol.can.SlotConfiguration;
 import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;

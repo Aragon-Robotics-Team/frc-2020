@@ -2,7 +2,7 @@ package art840.frc2020.subsystems.shooter;
 
 import art840.frc2020.map.Map;
 import art840.frc2020.util.FileIO.CachedFile;
-import art840.frc2020.util.SparkMaxFactory;
+import art840.frc2020.util.hardware.SparkMaxFactory;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;

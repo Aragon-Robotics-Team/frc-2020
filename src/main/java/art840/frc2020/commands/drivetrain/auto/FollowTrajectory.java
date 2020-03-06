@@ -1,7 +1,7 @@
 package art840.frc2020.commands.drivetrain.auto;
 
 import art840.frc2020.Robot;
-import art840.frc2020.util.FalconDashboard;
+import art840.frc2020.util.telemetry.FalconDashboard;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import edu.wpi.first.wpilibj2.command.CommandBase;

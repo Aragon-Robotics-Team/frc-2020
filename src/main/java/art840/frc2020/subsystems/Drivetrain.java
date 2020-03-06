@@ -3,12 +3,12 @@ package art840.frc2020.subsystems;
 import static java.util.Objects.requireNonNull;
 
 import art840.frc2020.Robot;
-import art840.frc2020.util.FalconDashboard;
-import art840.frc2020.util.InstantCommandDisabled;
-import art840.frc2020.util.NavX;
-import art840.frc2020.util.SparkMaxFactory;
 import art840.frc2020.util.TrajectoryConfigGen;
-import art840.frc2020.util.Tuple;
+import art840.frc2020.util.commands.InstantCommandDisabled;
+import art840.frc2020.util.hardware.NavX;
+import art840.frc2020.util.hardware.SparkMaxFactory;
+import art840.frc2020.util.math.Tuple;
+import art840.frc2020.util.telemetry.FalconDashboard;
 import com.ctre.phoenix.motorcontrol.can.SlotConfiguration;
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANPIDController;

@@ -1,5 +1,6 @@
-package art840.frc2020.util;
+package art840.frc2020.util.telemetry;
 
+import art840.frc2020.util.math.Tuple;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.geometry.Pose2d;

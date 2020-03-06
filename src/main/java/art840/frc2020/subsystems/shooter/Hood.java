@@ -1,9 +1,11 @@
 package art840.frc2020.subsystems.shooter;
 
 import art840.frc2020.map.Map;
-import art840.frc2020.util.SensorFactory;
+import art840.frc2020.util.hardware.SensorFactory;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Hood extends SubsystemBase {
@@ -52,5 +54,9 @@ public class Hood extends SubsystemBase {
                 _set(Value.kReverse);
                 break;
         }
+    }
+
+    public Command setCommand(Position position) {
+        return new InstantCommand(() -> set(position), this);
     }
 }

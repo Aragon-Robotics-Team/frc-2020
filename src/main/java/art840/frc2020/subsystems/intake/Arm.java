@@ -1,7 +1,7 @@
 package art840.frc2020.subsystems.intake;
 
 import art840.frc2020.map.Map;
-import art840.frc2020.util.SensorFactory;
+import art840.frc2020.util.hardware.SensorFactory;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;

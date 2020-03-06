@@ -3,8 +3,8 @@ package art840.frc2020.subsystems.shooter;
 import static java.util.Objects.requireNonNull;
 
 import art840.frc2020.map.Map;
-import art840.frc2020.util.InstantCommandDisabled;
-import art840.frc2020.util.TalonSRXWrapper;
+import art840.frc2020.util.commands.InstantCommandDisabled;
+import art840.frc2020.util.hardware.TalonSRXWrapper;
 import com.ctre.phoenix.motorcontrol.can.SlotConfiguration;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.controller.ProfiledPIDController;

@@ -1,7 +1,7 @@
 package art840.frc2020.subsystems.sensors;
 
-import art840.frc2020.util.ColorUtils;
-import art840.frc2020.util.ShuffleboardRGB;
+import art840.frc2020.util.telemetry.ColorUtils;
+import art840.frc2020.util.telemetry.ShuffleboardRGB;
 import com.revrobotics.ColorMatch;
 import com.revrobotics.ColorMatchResult;
 import com.revrobotics.ColorSensorV3;

@@ -1,7 +1,7 @@
 package art840.frc2020.subsystems.other;
 
 import art840.frc2020.map.Map;
-import art840.frc2020.util.InstantCommandDisabled;
+import art840.frc2020.util.commands.InstantCommandDisabled;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import edu.wpi.first.wpilibj2.command.Command;

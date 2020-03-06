@@ -1,4 +1,4 @@
-package art840.frc2020.util;
+package art840.frc2020.util.math;
 
 public class ScalingUtils {
     private ScalingUtils() {}

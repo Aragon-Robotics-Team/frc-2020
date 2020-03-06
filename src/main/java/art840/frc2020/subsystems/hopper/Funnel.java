@@ -1,7 +1,7 @@
 package art840.frc2020.subsystems.hopper;
 
 import art840.frc2020.map.Map;
-import art840.frc2020.util.SparkMaxFactory;
+import art840.frc2020.util.hardware.SparkMaxFactory;
 import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
