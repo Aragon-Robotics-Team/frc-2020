@@ -20,8 +20,7 @@ public class RotateToColor extends CommandBase {
     public boolean isFinished() {
         return Robot.sensors.colorSensor.currentColor == color;
     }
-    double llheight;
-    double targetHeight;
+
     public void end(boolean interrupted) {
         Robot.other.wheelSpinner.stop();
     }

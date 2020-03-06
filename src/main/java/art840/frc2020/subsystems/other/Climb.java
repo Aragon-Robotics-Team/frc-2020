@@ -4,8 +4,9 @@ import art840.frc2020.map.Map;
 import art840.frc2020.util.SensorFactory;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class Climb {
+public class Climb extends SubsystemBase {
     public static class Config {
         public int solenoidFwd;
         public int solenoidRev;

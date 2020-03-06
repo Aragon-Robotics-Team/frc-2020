@@ -44,6 +44,10 @@ public class OI implements Sendable {
         return new Trigger(() -> isPressed(button));
     }
 
+    protected final Trigger getAxisTrigger(final int axis) {
+        return new Trigger(() -> Math.abs(getAxis(axis)) > 0.2);
+    }
+
     public OI addChild(OI child) {
         // Only to keep a reference so not GCed
         children.add(child);

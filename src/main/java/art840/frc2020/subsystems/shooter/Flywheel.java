@@ -14,6 +14,8 @@ import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Flywheel extends SubsystemBase {
@@ -103,6 +105,14 @@ public class Flywheel extends SubsystemBase {
         pid.calculate(getRPM(), 0);
 
         setVoltage(0);
+    }
+
+    public final boolean atDesiredSpeed() {
+        return getRPM() > (config.speedRPM * 0.9);
+    }
+
+    public final Command spinAndWaitCommand() {
+        return new RunCommand(this::on, this).withInterrupt(this::atDesiredSpeed);
     }
 
     public final void beginLogging() {
