@@ -76,12 +76,7 @@ public class TestMap extends Map {
             }
         };
 
-        other.climb = new Climb.Config() {
-            {
-                solenoidFwd = 1;
-                solenoidRev = 0;
-            }
-        };
+        other.climb = new Climb.Config() {};
 
         other.wheelSpinner = new WheelSpinner.Config() {
             {

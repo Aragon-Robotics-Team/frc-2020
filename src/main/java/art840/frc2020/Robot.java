@@ -58,6 +58,8 @@ public class Robot extends RobotBase {
 
         drivetrain.teleop.driveArcade().schedule();
 
+        intake.arm.armOut().schedule();
+
         // (new RunEndCommand(() -> drivetrain.controller.driveVoltage(new Tuple(4, 4)),
         // drivetrain.controller::driveZero, drivetrain)).schedule();
 
@@ -103,6 +105,8 @@ public class Robot extends RobotBase {
         NavX.ahrs.reset();
         drivetrain.controller.reset();
         drivetrain.odometry.resetAll();
+
+        intake.arm.armOut().schedule();
 
         // (c.getSelected()).schedule();
         // autoCommandrivetrain.schedule();

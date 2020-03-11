@@ -4,9 +4,11 @@ import art840.frc2020.oi.GenericController;
 import art840.frc2020.subsystems.Drivetrain;
 import art840.frc2020.subsystems.hopper.Funnel;
 import art840.frc2020.subsystems.hopper.Tower;
+import art840.frc2020.subsystems.intake.Arm;
 import art840.frc2020.subsystems.intake.Rollers;
 import art840.frc2020.subsystems.other.Climb;
 import art840.frc2020.subsystems.shooter.Flywheel;
+import art840.frc2020.subsystems.shooter.Hood;
 import art840.frc2020.subsystems.shooter.Turret;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj.util.Units;
@@ -31,7 +33,7 @@ public class CVRMap extends Map {
                 wheelCircumference = Units.inchesToMeters(6.0 * Math.PI);
                 trackWidth = Units.inchesToMeters(24.75);
 
-                maxVelocity = 10; // m/s
+                maxVelocity = 8; // m/s
                 maxAcceleration = 6;
                 maxAngularVelocity = 8 * Math.PI; // rad/s
                 // maxAngularVelocity = 8 * Math.PI; // rad/s
@@ -102,9 +104,34 @@ public class CVRMap extends Map {
 
         other.climb = new Climb.Config() {
             {
-                this.solenoidFwd = 3;
-                this.solenoidRev = 4;
+                solenoidLeftFwd = 5;
+                solenoidLeftRev = 2;
+
+                solenoidRightFwd = 4;
+                solenoidRightRev = 3;
+
+                disabled = false;
             }
         };
+
+        intake.arm = new Arm.Config() {
+            {
+                solenoidLeftFwd = 0;
+                solenoidLeftRev = 7;
+
+                solenoidRightFwd = 1;
+                solenoidRightRev = 6;
+
+                disabled = false;
+            }
+        };
+
+        shooter.hood = new Hood.Config() {
+            {
+                disabled = true;
+            }
+        };
+
+        other.pcmId = 2;
     }
 }

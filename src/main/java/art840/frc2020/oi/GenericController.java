@@ -93,5 +93,15 @@ public class GenericController extends Joystick {
                         Robot.hopper.tower::stop, Robot.hopper.tower))
                 .whileActiveOnce(new RunEndCommand(Robot.hopper.funnel::setReverse,
                         Robot.hopper.funnel::setOff, Robot.hopper.funnel));
+
+        // getButton(Button.Y).toggleWhenActive(Robot.other.climb.setOutCommand().perpetually());
+        // getButton(Button.LBump).toggleWhenActive(Robot.intake.arm.armIn().perpetually());
+
+        var climbOut = Robot.other.climb.setOutCommand().perpetually();
+
+        getButton(Button.Y).toggleWhenActive(
+                climbOut.asProxy().alongWith(Robot.intake.arm.armIn().perpetually()));
+
+        getButton(Button.LBump).toggleWhenActive(climbOut);
     }
 }
