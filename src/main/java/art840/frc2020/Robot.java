@@ -10,7 +10,9 @@ import art840.frc2020.subsystems.sensors.Sensors;
 import art840.frc2020.subsystems.shooter.Shooter;
 import art840.frc2020.util.RobotBase;
 import art840.frc2020.util.commands.InstantCommandDisabled;
+import art840.frc2020.util.commands.RunEndCommand;
 import art840.frc2020.util.hardware.NavX;
+import art840.frc2020.util.math.Tuple;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import io.github.oblarg.oblog.Logger;
@@ -107,6 +109,13 @@ public class Robot extends RobotBase {
         drivetrain.odometry.resetAll();
 
         intake.arm.armOut().schedule();
+
+        boolean doAuto = true;
+
+        if (doAuto) {
+            (new RunEndCommand(() -> drivetrain.teleop.driveArcadeShitty(new Tuple(1.0, 0.0)),
+                    drivetrain.controller::driveZero, drivetrain)).withTimeout(2).schedule();
+        }
 
         // (c.getSelected()).schedule();
         // autoCommandrivetrain.schedule();
