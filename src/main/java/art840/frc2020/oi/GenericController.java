@@ -79,19 +79,25 @@ public class GenericController extends Joystick {
 
         // getAxisTrigger(Axis.RT).whileActiveOnce(Shoot.create());
 
-        getButton(Button.A).toggleWhenActive(new RunEndCommand(Robot.intake.rollers.motors::setOn,
-                Robot.intake.rollers.motors::setZero, Robot.intake.rollers));
+        // getButton(Button.A).toggleWhenActive(new RunEndCommand(Robot.intake.rollers.motors::setOn,
+        //         Robot.intake.rollers.motors::setZero, Robot.intake.rollers));
+                
+        getButton(Button.A).toggleWhenActive(
+                Robot.intake.rollers.setOnCommand());
 
         getButton(Button.B).toggleWhenActive(new RunEndCommand(Robot.hopper.funnel::setFwd,
                 Robot.hopper.funnel::setOff, Robot.hopper.funnel));
 
-        getButton(Button.X).toggleWhenActive(new RunEndCommand(Robot.hopper.tower::setFwd,
+        getButton(Button.B).toggleWhenActive(new RunEndCommand(Robot.hopper.tower::setFwd,
                 Robot.hopper.tower::stop, Robot.hopper.tower));
 
-        getButton(Button.Y).toggleWhenActive(new RunEndCommand(Robot.shooter.flywheel::on,
+        getButton(Button.B).toggleWhenActive(new RunEndCommand(Robot.shooter.flywheel::on,
                 Robot.shooter.flywheel::off, Robot.shooter.flywheel));
 
-        getButton(Button.LBump).whileActiveOnce(new RunEndCommand(Robot.hopper.tower::setRev,
+        getButton(Button.X).whileActiveOnce(new RunEndCommand(Robot.hopper.tower::setRev,
                 Robot.hopper.tower::stop, Robot.hopper.tower));
+                
+                getButton(Button.X).whileActiveOnce(new RunEndCommand(Robot.hopper.funnel::setReverse,
+                Robot.hopper.funnel::setOff, Robot.hopper.funnel));
     }
 }

@@ -55,6 +55,8 @@ public class Robot extends RobotBase {
 
         drivetrain.odometry.resetAll();
         drivetrain.controller.reset();
+        
+        drivetrain.teleop.driveArcade().schedule();
 
         // (new RunEndCommand(() -> drivetrain.controller.driveVoltage(new Tuple(4, 4)),
         // drivetrain.controller::driveZero, drivetrain)).schedule();

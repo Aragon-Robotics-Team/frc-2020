@@ -104,7 +104,7 @@ public class Turret extends SubsystemBase implements Loggable {
     public final void periodic() {
         boolean status = heffect.get();
         //SmartDashboard.putBoolean("DB/LED 9", heffect.get());
-        System.out.println("Hall Effect:" + status);
+        // System.out.println("Hall Effect:" + status);
         if (DriverStation.getInstance().isDisabled()) {
             reset();
             return;

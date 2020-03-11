@@ -218,7 +218,7 @@ public final class Drivetrain extends SubsystemBase {
             var dt = time - lastTime;
 
             tempAccel.set((vel.left - savedVel.left) / dt, (vel.right - savedVel.right) / dt);
-            System.out.println("Accel: " + tempAccel);
+            // System.out.println("Accel: " + tempAccel);
 
             lastTime = time;
 
@@ -235,12 +235,12 @@ public final class Drivetrain extends SubsystemBase {
         }
 
         private final Tuple calcVel(DifferentialDriveWheelSpeeds speeds) {
-            System.out.println(speeds);
+            // System.out.println(speeds);
             return tempVel.set(speeds);
         }
 
         private final Tuple calcVel(ChassisSpeeds speeds) {
-            System.out.println(speeds);
+            // System.out.println(speeds);
             return calcVel(odometry.kinematics.toWheelSpeeds(speeds));
         }
 
@@ -269,7 +269,7 @@ public final class Drivetrain extends SubsystemBase {
 
         // // // // // 0
         public final void _driveRawVelocity(Tuple vel, Tuple feedforward) {
-            System.out.println("vel: " + vel + " ff: " + feedforward);
+            // System.out.println("vel: " + vel + " ff: " + feedforward);
             leftPID.setReference(vel.left, ControlType.kVelocity, 0, feedforward.left,
                     ArbFFUnits.kVoltage);
             rightPID.setReference(vel.right, ControlType.kVelocity, 0, feedforward.right,
@@ -321,6 +321,10 @@ public final class Drivetrain extends SubsystemBase {
         // // // // // 3
         public final void driveChassisFF(ChassisSpeeds speeds) {
             driveVelocityFF(calcVel(speeds));
+        }
+        
+        public final void driveChassisShitty(ChassisSpeeds speeds) {
+            driveVoltage(calcVel(speeds));
         }
 
         // // // // // 4
@@ -397,7 +401,7 @@ public final class Drivetrain extends SubsystemBase {
          * because chassisspeeds +rotation is CCW
          */
         private final ChassisSpeeds convertJoystickToSpeeds(Tuple speeds) {
-            System.out.println(speeds);
+            // System.out.println(speeds);
 
             return new ChassisSpeeds(throttleSlew.calculate(speeds.left * config.maxVelocity), 0,
                     rotationSlew.calculate(-1 * speeds.right * config.maxAngularVelocity));
@@ -416,9 +420,14 @@ public final class Drivetrain extends SubsystemBase {
         public final void driveArcade(Tuple speeds) {
             controller.driveChassis(convertJoystickToSpeeds(speeds));
         }
+        
+        public final void driveArcadeShitty(Tuple speeds) {
+            controller.driveChassisShitty(convertJoystickToSpeeds(speeds));
+        }
 
         public final Command driveArcade() {
-            return stopInstant().andThen(new WaitCommand(1), new CommandBase() {
+            // return stopInstant().andThen(new WaitCommand(1), new CommandBase() {
+                return new CommandBase() {
                 Tuple tmp = new Tuple();
 
                 {
@@ -432,14 +441,14 @@ public final class Drivetrain extends SubsystemBase {
                 }
 
                 public void execute() {
-                    driveArcadeFF(tmp.set(Robot.joystick.getThrottle(), Robot.joystick.getTurn()));
+                    driveArcadeShitty(tmp.set(Robot.joystick.getThrottle(), Robot.joystick.getTurn()));
                 }
 
                 public void end(boolean i) {
                     controller.driveZero();
                     reset();
                 }
-            });
+            };
         }
 
         public final Command stopInstant() {

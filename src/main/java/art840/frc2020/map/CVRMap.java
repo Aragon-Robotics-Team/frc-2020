@@ -30,13 +30,15 @@ public class CVRMap extends Map {
                 wheelCircumference = Units.inchesToMeters(6.0 * Math.PI);
                 trackWidth = Units.inchesToMeters(24.75);
 
-                maxVelocity = 3; // m/s
+                maxVelocity = 10; // m/s
                 maxAcceleration = 6;
-                maxAngularVelocity = 2 * Math.PI; // rad/s
+                maxAngularVelocity = 8 * Math.PI; // rad/s
+                // maxAngularVelocity = 8 * Math.PI; // rad/s
                 maxAngularAccel = 4 * Math.PI;
 
-                teleopLinearSlew = 6;
-                teleopRotationalSlew = 4 * Math.PI;
+                teleopLinearSlew = 32;
+                teleopRotationalSlew = 32
+                 * Math.PI;
             }
         };
 
