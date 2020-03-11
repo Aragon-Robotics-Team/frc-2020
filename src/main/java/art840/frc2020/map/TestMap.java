@@ -105,10 +105,9 @@ public class TestMap extends Map {
                 // All values temporary, just guessing
                 motorPort = -1;
                 // motorPort = 3;
-                motorInvert = false;
 
-                encoderPortA = 0;
-                encoderPortB = 1;
+                // encoderPortA = 0;
+                // encoderPortB = 1;
                 encoderInvert = false;
                 encoderResolution = 2048;
 

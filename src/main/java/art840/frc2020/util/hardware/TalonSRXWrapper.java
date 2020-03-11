@@ -2,7 +2,6 @@ package art840.frc2020.util.hardware;
 
 import art840.frc2020.util.Mock;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
@@ -41,6 +40,7 @@ public class TalonSRXWrapper implements Loggable {
         encoderConstant = config.gearRatio / config.encoderResolution;
 
         if (config.port >= 0) {
+            System.out.println("Making Talon " + config.port);
             talon = new TalonSRX(config.port);
         } else {
             talon = Mock.mock(TalonSRX.class);
@@ -56,8 +56,16 @@ public class TalonSRXWrapper implements Loggable {
         talon.enableVoltageCompensation(true);
         talon.setSelectedSensorPosition(0, 0, timeoutMs);
 
-        talon.setStatusFramePeriod(StatusFrameEnhanced.Status_1_General, 10, timeoutMs);
-        talon.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 10, timeoutMs);
+        // System.out.println("talon " + config.port + ": " + talon.getFirmwareVersion());
+
+        if (talon.getFirmwareVersion() == -1) {
+            System.out.println(
+                    "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! UNPLUGGED: Talon "
+                            + config.port + " is unplugged");
+        }
+
+        // talon.setStatusFramePeriod(StatusFrameEnhanced.Status_1_General, 10, timeoutMs);
+        // talon.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 10, timeoutMs);
     }
 
     public final void setVoltage(double voltage) {

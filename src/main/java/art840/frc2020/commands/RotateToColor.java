@@ -9,12 +9,12 @@ public class RotateToColor extends CommandBase {
 
     public RotateToColor(Colors _color) {
         color = _color;
-        addRequirements(Robot.other.wheelSpinner);
+        // addRequirements(Robot.other.wheelSpinner);
     }
 
     public void execute() {
         var direction = Robot.sensors.colorSensor.calculateDirection(color);
-        Robot.other.wheelSpinner.set(!direction);
+        // Robot.other.wheelSpinner.set(!direction);
     }
 
     public boolean isFinished() {
@@ -22,6 +22,6 @@ public class RotateToColor extends CommandBase {
     }
 
     public void end(boolean interrupted) {
-        Robot.other.wheelSpinner.stop();
+        // Robot.other.wheelSpinner.stop();
     }
 }

@@ -1,8 +1,8 @@
 package art840.frc2020.oi;
 
 import art840.frc2020.Robot;
-import art840.frc2020.commands.Shoot;
 import art840.frc2020.subsystems.other.Climb.Position;
+import art840.frc2020.util.commands.RunEndCommand;
 import art840.frc2020.util.math.ScalingUtils;
 
 public class GenericController extends Joystick {
@@ -77,6 +77,21 @@ public class GenericController extends Joystick {
         // getButton(Button.B).whenActive(new RotateToColor(Colors.Red));
         // getButton(Button.A).whenActive(Robot.other.wheelSpinner.stopCommand());
 
-        getAxisTrigger(Axis.RT).whileActiveOnce(Shoot.create());
+        // getAxisTrigger(Axis.RT).whileActiveOnce(Shoot.create());
+
+        getButton(Button.A).toggleWhenActive(new RunEndCommand(Robot.intake.rollers.motors::setOn,
+                Robot.intake.rollers.motors::setZero, Robot.intake.rollers));
+
+        getButton(Button.B).toggleWhenActive(new RunEndCommand(Robot.hopper.funnel::setFwd,
+                Robot.hopper.funnel::setOff, Robot.hopper.funnel));
+
+        getButton(Button.X).toggleWhenActive(new RunEndCommand(Robot.hopper.tower::setFwd,
+                Robot.hopper.tower::stop, Robot.hopper.tower));
+
+        getButton(Button.Y).toggleWhenActive(new RunEndCommand(Robot.shooter.flywheel::on,
+                Robot.shooter.flywheel::off, Robot.shooter.flywheel));
+
+        getButton(Button.LBump).whileActiveOnce(new RunEndCommand(Robot.hopper.tower::setRev,
+                Robot.hopper.tower::stop, Robot.hopper.tower));
     }
 }

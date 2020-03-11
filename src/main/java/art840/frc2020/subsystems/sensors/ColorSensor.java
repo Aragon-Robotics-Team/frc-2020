@@ -1,11 +1,11 @@
 package art840.frc2020.subsystems.sensors;
 
+import art840.frc2020.util.Mock;
 import art840.frc2020.util.telemetry.ColorUtils;
 import art840.frc2020.util.telemetry.ShuffleboardRGB;
 import com.revrobotics.ColorMatch;
 import com.revrobotics.ColorMatchResult;
 import com.revrobotics.ColorSensorV3;
-import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import io.github.oblarg.oblog.Loggable;
@@ -14,7 +14,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ColorSensor extends SubsystemBase implements Loggable {
-    public final ColorSensorV3 color = new ColorSensorV3(I2C.Port.kOnboard);
+    // public final ColorSensorV3 color = new ColorSensorV3(I2C.Port.kOnboard);
+    public final ColorSensorV3 color = Mock.mock(ColorSensorV3.class);
 
     public Colors currentColor;
     String matchedColor;

@@ -26,7 +26,8 @@ public class Arm extends SubsystemBase {
     private Position position;
 
     public Arm() {
-        this(Map.map.intake.arm);
+        // this(Map.map.intake.arm);
+        this(new Config());
     }
 
     public Arm(Config _config) {

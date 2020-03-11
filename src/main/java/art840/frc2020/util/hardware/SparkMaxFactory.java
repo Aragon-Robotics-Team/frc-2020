@@ -7,7 +7,6 @@ import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-import com.revrobotics.CANSparkMaxLowLevel.PeriodicFrame;
 
 public class SparkMaxFactory {
     // Periodic Status Frames:
@@ -33,15 +32,21 @@ public class SparkMaxFactory {
         spark.setIdleMode(IdleMode.kBrake);
         spark.enableVoltageCompensation(voltageCompensation);
 
+        if (spark.getFirmwareVersion() == 0) {
+            System.out.println(
+                    "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! UNPLUGGED: Spark "
+                            + port + " is unplugged");
+        }
+
         return spark;
     }
 
     public static CANSparkMax createMaster(int port, MotorType type) {
         var master = create(port, type);
 
-        master.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 5);
-        master.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 10);
-        master.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 5);
+        // master.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 5);
+        // master.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 10);
+        // master.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 5);
 
         return master;
     }
@@ -55,9 +60,9 @@ public class SparkMaxFactory {
 
         follower.follow(master, false);
 
-        follower.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 500);
-        follower.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 500);
-        follower.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 500);
+        // follower.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 500);
+        // follower.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 500);
+        // follower.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 500);
 
         return follower;
     }

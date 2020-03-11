@@ -44,6 +44,8 @@ public class Funnel extends SubsystemBase {
             leftMotor.setClosedLoopRampRate(config.rampTime);
             rightMotor.setOpenLoopRampRate(config.rampTime);
             rightMotor.setClosedLoopRampRate(config.rampTime);
+            leftMotor.setIdleMode(IdleMode.kCoast);
+            rightMotor.setIdleMode(IdleMode.kCoast);
 
             setBrake(false);
 

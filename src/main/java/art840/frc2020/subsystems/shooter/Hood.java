@@ -1,6 +1,5 @@
 package art840.frc2020.subsystems.shooter;
 
-import art840.frc2020.map.Map;
 import art840.frc2020.util.hardware.SensorFactory;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
@@ -24,7 +23,8 @@ public class Hood extends SubsystemBase {
     private Position position;
 
     public Hood() {
-        this(Map.map.shooter.hood);
+        this(new Config());
+        // this(Map.map.shooter.hood);
     }
 
     public Hood(Config _config) {

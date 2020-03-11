@@ -1,6 +1,5 @@
 package art840.frc2020.subsystems.other;
 
-import art840.frc2020.map.Map;
 import art840.frc2020.util.hardware.SensorFactory;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
@@ -22,7 +21,8 @@ public class Climb extends SubsystemBase {
     private Position position;
 
     public Climb() {
-        this(Map.map.other.climb);
+        this(new Config());
+        // this(Map.map.other.climb);
     }
 
     public Climb(Config _config) {

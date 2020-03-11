@@ -127,16 +127,18 @@ public final class Drivetrain extends SubsystemBase {
                 case kBrushless:
                     leftEncoder = motors.leftMotor.getEncoder();
                     rightEncoder = motors.rightMotor.getEncoder();
+                    break;
                 case kBrushed:
                     leftEncoder = motors.leftMotor.getEncoder(EncoderType.kQuadrature,
                             config.quadratureResolution);
                     rightEncoder = motors.rightMotor.getEncoder(EncoderType.kQuadrature,
                             config.quadratureResolution);
-            }
 
-            leftEncoder.setInverted(config.invertAll ^ config.invertAllEncoders);
-            rightEncoder.setInverted(config.invertAll ^ config.invertRight
-                    ^ config.invertAllEncoders ^ config.invertRightEncoders);
+                    leftEncoder.setInverted(config.invertAll ^ config.invertAllEncoders);
+                    rightEncoder.setInverted(config.invertAll ^ config.invertRight
+                            ^ config.invertAllEncoders ^ config.invertRightEncoders);
+                    break;
+            }
 
             leftEncoder.setPosition(0);
             leftEncoder.setPositionConversionFactor(rotationsToMeters);
@@ -430,7 +432,7 @@ public final class Drivetrain extends SubsystemBase {
                 }
 
                 public void execute() {
-                    driveArcade(tmp.set(Robot.joystick.getThrottle(), Robot.joystick.getTurn()));
+                    driveArcadeFF(tmp.set(Robot.joystick.getThrottle(), Robot.joystick.getTurn()));
                 }
 
                 public void end(boolean i) {

@@ -13,7 +13,7 @@ import art840.frc2020.subsystems.shooter.Hood;
 import art840.frc2020.subsystems.shooter.Turret;
 
 public class Map {
-    public static final Map map = new TestMap();
+    public static final Map map = new CVRMap();
 
     public Joystick joystick;
 

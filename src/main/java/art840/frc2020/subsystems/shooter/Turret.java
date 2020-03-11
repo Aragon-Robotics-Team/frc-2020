@@ -52,8 +52,8 @@ public class Turret extends SubsystemBase implements Loggable {
     final Config config;
     final TalonSRXWrapper motor;
     
-    final BooleanSupplier getLeftHallEffect;
-    final BooleanSupplier getRightHallEffect;
+    // final BooleanSupplier getLeftHallEffect;
+    // final BooleanSupplier getRightHallEffect;
 
     @Log
     double pidOutput;
@@ -87,9 +87,9 @@ public class Turret extends SubsystemBase implements Loggable {
                 new TrapezoidProfile.Constraints(config.maxVelocity, config.maxAcceleration));
         pid.setTolerance(0.002);
         
-        if (config.leftHallEffect >= 0) {
-            getLeftHallEffect = (new DigitalInput(config.leftHallEffect))
-        }
+        // if (config.leftHallEffect >= 0) {
+            // getLeftHallEffect = (new DigitalInput(config.leftHallEffect))
+        // }
     }
 
     @io.github.oblarg.oblog.annotations.Config

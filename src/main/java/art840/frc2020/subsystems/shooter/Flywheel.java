@@ -2,12 +2,7 @@ package art840.frc2020.subsystems.shooter;
 
 import art840.frc2020.map.Map;
 import art840.frc2020.util.FileIO.CachedFile;
-import art840.frc2020.util.hardware.SparkMaxFactory;
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMax.IdleMode;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-import edu.wpi.first.wpilibj.CounterBase.EncodingType;
-import edu.wpi.first.wpilibj.Encoder;
+import art840.frc2020.util.hardware.TalonSRXWrapper;
 import edu.wpi.first.wpilibj.SlewRateLimiter;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.controller.PIDController;
@@ -17,16 +12,19 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import io.github.oblarg.oblog.Loggable;
+import io.github.oblarg.oblog.annotations.Log;
 
-public class Flywheel extends SubsystemBase {
+public class Flywheel extends SubsystemBase implements Loggable {
     public static class Config {
-        public int motorPort;
-        public boolean motorInvert;
+        public int motorPort = -1;
+        public int motorPortSlave = -1;
+        public boolean invertAll = false;
+        public boolean invertSlave = true;
 
-        public int encoderPortA;
-        public int encoderPortB;
         public boolean encoderInvert;
-        public double encoderResolution; // 1x
+        public double encoderResolution;
+        public double gearRatio = 1.0;
 
         public double speedRPM;
         public double rampTime; // seconds to ramp, not acceleration
@@ -38,8 +36,8 @@ public class Flywheel extends SubsystemBase {
 
     final Config config;
 
-    final CANSparkMax motor;
-    final Encoder encoder;
+    final TalonSRXWrapper motor;
+    final TalonSRXWrapper motorSlave;
 
     final PIDController pid;
     final SlewRateLimiter ramp;
@@ -57,27 +55,40 @@ public class Flywheel extends SubsystemBase {
     public Flywheel(final Config _config) {
         config = _config;
 
-        motor = SparkMaxFactory.createMaster(config.motorPort, MotorType.kBrushed);
-        motor.setInverted(config.motorInvert);
-        motor.setIdleMode(IdleMode.kCoast);
+        motor = new TalonSRXWrapper(new TalonSRXWrapper.Config() {
+            {
+                port = config.motorPort;
+                invert = config.invertAll;
+                encoderResolution = config.encoderResolution;
+                gearRatio = config.gearRatio;
 
-        // assuming 1:1
-        encoder = new Encoder(config.encoderPortA, config.encoderPortB, config.encoderInvert,
-                EncodingType.k4X);
-        encoder.setDistancePerPulse(1 / config.encoderResolution);
+                openloopRamp = config.rampTime;
+                closedloopRamp = config.rampTime;
+            }
+        });
+
+        motorSlave = new TalonSRXWrapper(new TalonSRXWrapper.Config() {
+            {
+                port = config.motorPortSlave;
+                invert = config.invertAll ^ config.invertSlave;
+
+                openloopRamp = config.rampTime;
+                closedloopRamp = config.rampTime;
+            }
+        });
+
+        motor.setBrake(false);
+        motorSlave.setBrake(false);
+        motorSlave.talon.follow(motor.talon);
 
         pid = new PIDController(config.kP, 0, 0);
         ramp = new SlewRateLimiter(1 / config.rampTime);
 
         motorTelemetry = Shuffleboard.getTab("Flywheel").getLayout("Motor", BuiltInLayouts.kList);
         motorTelemetry.addNumber("Voltage", () -> voltage);
-        motorTelemetry.addNumber("Output", motor::get);
+        // motorTelemetry.addNumber("Output", motor::get);
         motorTelemetry.addNumber("RPM", this::getRPM);
         motorTelemetry.addNumber("Error", () -> this.getRPM() - config.speedRPM);
-    }
-
-    public final double getRPM() {
-        return encoder.getRate() * 60;
     }
 
     public final void setVoltage(double voltage) {
@@ -92,17 +103,18 @@ public class Flywheel extends SubsystemBase {
     }
 
     public final void on() {
-        final double desiredPercent = ramp.calculate(1);
-        final double output = pid.calculate(getRPM(), config.speedRPM * desiredPercent)
-                + (config.constantFF * desiredPercent);
-        setVoltage(Math.max(0, output));
+        // final double desiredPercent = ramp.calculate(1);
+        // final double output = pid.calculate(getRPM(), config.speedRPM * desiredPercent)
+        // + (config.constantFF * desiredPercent);
+        // setVoltage(Math.max(0, output));
+        setVoltage(config.constantFF);
     }
 
     public final void off() {
         // No ramp down: just turn off power and go into coast
         // But still run calculations so can 'resume' ramp
-        ramp.calculate(0);
-        pid.calculate(getRPM(), 0);
+        // ramp.calculate(0);
+        // pid.calculate(getRPM(), 0);
 
         setVoltage(0);
     }
@@ -131,9 +143,14 @@ public class Flywheel extends SubsystemBase {
         }
     }
 
+    @Log
+    public final double getRPM() {
+        return motor.getRPS() * 60.0;
+    }
+
     public final void periodic() {
         if (file != null) {
-            file.println(timer.get(), ",", voltage, ",", motor.get(), ",", getRPM());
+            // file.println(timer.get(), ",", voltage, ",", motor.get(), ",", getRPM());
         }
     }
 }
