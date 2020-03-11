@@ -51,11 +51,11 @@ public class Robot extends RobotBase {
         // (new RunCommand(shooter.flywheel::on, shooter.flywheel)).schedule();
 
         waitAndCoast.cancel();
-        drivetrain.setBrake(false);
+        drivetrain.setBrake(true);
 
         drivetrain.odometry.resetAll();
         drivetrain.controller.reset();
-        
+
         drivetrain.teleop.driveArcade().schedule();
 
         // (new RunEndCommand(() -> drivetrain.controller.driveVoltage(new Tuple(4, 4)),

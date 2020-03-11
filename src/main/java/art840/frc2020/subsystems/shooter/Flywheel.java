@@ -2,6 +2,7 @@ package art840.frc2020.subsystems.shooter;
 
 import art840.frc2020.map.Map;
 import art840.frc2020.util.FileIO.CachedFile;
+import art840.frc2020.util.commands.RunEndCommand;
 import art840.frc2020.util.hardware.TalonSRXWrapper;
 import edu.wpi.first.wpilibj.SlewRateLimiter;
 import edu.wpi.first.wpilibj.Timer;
@@ -152,5 +153,9 @@ public class Flywheel extends SubsystemBase implements Loggable {
         if (file != null) {
             // file.println(timer.get(), ",", voltage, ",", motor.get(), ",", getRPM());
         }
+    }
+
+    public final Command keepOnCommand() {
+        return new RunEndCommand(this::on, this::off, this);
     }
 }

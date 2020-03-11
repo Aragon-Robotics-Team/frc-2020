@@ -2,23 +2,19 @@ package art840.frc2020.subsystems.shooter;
 
 import static java.util.Objects.requireNonNull;
 
-import java.util.function.BooleanSupplier;
-
 import art840.frc2020.map.Map;
 import art840.frc2020.util.commands.InstantCommandDisabled;
 import art840.frc2020.util.commands.RunEndCommand;
+import art840.frc2020.util.hardware.SensorFactory;
 import art840.frc2020.util.hardware.TalonSRXWrapper;
 import com.ctre.phoenix.motorcontrol.can.SlotConfiguration;
-import com.revrobotics.CANSparkMax;
-
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.controller.ProfiledPIDController;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import io.github.oblarg.oblog.Loggable;
 import io.github.oblarg.oblog.annotations.Log;
 
@@ -29,9 +25,10 @@ public class Turret extends SubsystemBase implements Loggable {
 
         public int quadratureResolution;
         public boolean invertEncoder;
-        
+
         public int leftHallEffect = -1;
         public int rightHallEffect = -1;
+        public boolean invertHallEffect = true;
 
         public double gearRatio = 1;
 
@@ -51,9 +48,9 @@ public class Turret extends SubsystemBase implements Loggable {
 
     final Config config;
     final TalonSRXWrapper motor;
-    
-    // final BooleanSupplier getLeftHallEffect;
-    // final BooleanSupplier getRightHallEffect;
+
+    final Trigger hallEffectLeft;
+    final Trigger hallEffectRight;
 
     @Log
     double pidOutput;
@@ -86,32 +83,26 @@ public class Turret extends SubsystemBase implements Loggable {
                 config.velocityPID.kD,
                 new TrapezoidProfile.Constraints(config.maxVelocity, config.maxAcceleration));
         pid.setTolerance(0.002);
-        
-        // if (config.leftHallEffect >= 0) {
-            // getLeftHallEffect = (new DigitalInput(config.leftHallEffect))
-        // }
+
+        hallEffectLeft =
+                SensorFactory.createDigitalInput(config.leftHallEffect, config.invertHallEffect);
+        hallEffectRight =
+                SensorFactory.createDigitalInput(config.rightHallEffect, config.invertHallEffect);
     }
 
     @io.github.oblarg.oblog.annotations.Config
     final void pos(double val) {
         pos = val;
     }
-    
-    
+
     double pos;
-    // public final void setPosition(double pos) {
-        DigitalInput heffect = new DigitalInput(9);
+
     public final void periodic() {
-        boolean status = heffect.get();
-        //SmartDashboard.putBoolean("DB/LED 9", heffect.get());
-        // System.out.println("Hall Effect:" + status);
         if (DriverStation.getInstance().isDisabled()) {
             reset();
             return;
         }
-        
-        
-        
+
         /*
          *
          * Limelight readLimeLight = new Limelight();
@@ -162,7 +153,7 @@ public class Turret extends SubsystemBase implements Loggable {
         if (isDisabled) {
             return;
         }
-        
+
         _setPostion(position);
     }
 

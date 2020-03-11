@@ -1,7 +1,9 @@
 package art840.frc2020.subsystems.hopper;
 
 import art840.frc2020.map.Map;
+import art840.frc2020.util.commands.RunEndCommand;
 import art840.frc2020.util.hardware.TalonSRXWrapper;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Tower extends SubsystemBase {
@@ -51,5 +53,13 @@ public class Tower extends SubsystemBase {
 
     public void stop() {
         motor.setVoltage(0);
+    }
+
+    public final Command keepOnCommand() {
+        return new RunEndCommand(this::setFwd, this::stop, this);
+    }
+
+    public final Command keepRevCommand() {
+        return new RunEndCommand(this::setRev, this::stop, this);
     }
 }

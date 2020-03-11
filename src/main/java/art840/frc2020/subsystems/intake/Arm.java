@@ -1,7 +1,6 @@
 package art840.frc2020.subsystems.intake;
 
 import art840.frc2020.Robot;
-import art840.frc2020.map.Map;
 import art840.frc2020.util.hardware.SensorFactory;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
@@ -59,14 +58,13 @@ public class Arm extends SubsystemBase {
                 break;
         }
     }
-    
+
     public Command centerIntakeAndArmIn() {
         return Robot.shooter.turret.moveToCenterAndDisable().andThen(() -> set(Position.In), this);
     }
-    
-    public Command armOut(){
-        return new InstantCommand(() -> set(Position.Out), this)
-        .andThen(new WaitCommand(2))
-        .andThen(() -> Robot.shooter.turret.setDisabled(false), Robot.shooter.turret);
+
+    public Command armOut() {
+        return new InstantCommand(() -> set(Position.Out), this).andThen(new WaitCommand(2))
+                .andThen(() -> Robot.shooter.turret.setDisabled(false), Robot.shooter.turret);
     }
 }

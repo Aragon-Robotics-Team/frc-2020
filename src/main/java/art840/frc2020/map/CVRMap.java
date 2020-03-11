@@ -5,6 +5,7 @@ import art840.frc2020.subsystems.Drivetrain;
 import art840.frc2020.subsystems.hopper.Funnel;
 import art840.frc2020.subsystems.hopper.Tower;
 import art840.frc2020.subsystems.intake.Rollers;
+import art840.frc2020.subsystems.other.Climb;
 import art840.frc2020.subsystems.shooter.Flywheel;
 import art840.frc2020.subsystems.shooter.Turret;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
@@ -37,8 +38,7 @@ public class CVRMap extends Map {
                 maxAngularAccel = 4 * Math.PI;
 
                 teleopLinearSlew = 32;
-                teleopRotationalSlew = 32
-                 * Math.PI;
+                teleopRotationalSlew = 32 * Math.PI;
             }
         };
 
@@ -47,9 +47,10 @@ public class CVRMap extends Map {
                 leftMotor = 7;
                 rightMotor = 6;
 
+                invertRight = true;
                 motorType = MotorType.kBrushless;
 
-                voltsFull = 6;
+                voltsFull = 2;
                 voltsReverse = 2;
                 rampTime = 1;
             }
@@ -96,6 +97,13 @@ public class CVRMap extends Map {
         shooter.turret = new Turret.Config() {
             {
                 motor = 4;
+            }
+        };
+
+        other.climb = new Climb.Config() {
+            {
+                this.solenoidFwd = 3;
+                this.solenoidRev = 4;
             }
         };
     }

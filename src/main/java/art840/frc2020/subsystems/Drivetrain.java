@@ -36,7 +36,6 @@ import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import java.util.Map;
 
 public final class Drivetrain extends SubsystemBase {
@@ -322,7 +321,7 @@ public final class Drivetrain extends SubsystemBase {
         public final void driveChassisFF(ChassisSpeeds speeds) {
             driveVelocityFF(calcVel(speeds));
         }
-        
+
         public final void driveChassisShitty(ChassisSpeeds speeds) {
             driveVoltage(calcVel(speeds));
         }
@@ -420,14 +419,14 @@ public final class Drivetrain extends SubsystemBase {
         public final void driveArcade(Tuple speeds) {
             controller.driveChassis(convertJoystickToSpeeds(speeds));
         }
-        
+
         public final void driveArcadeShitty(Tuple speeds) {
             controller.driveChassisShitty(convertJoystickToSpeeds(speeds));
         }
 
         public final Command driveArcade() {
             // return stopInstant().andThen(new WaitCommand(1), new CommandBase() {
-                return new CommandBase() {
+            return new CommandBase() {
                 Tuple tmp = new Tuple();
 
                 {
@@ -441,7 +440,8 @@ public final class Drivetrain extends SubsystemBase {
                 }
 
                 public void execute() {
-                    driveArcadeShitty(tmp.set(Robot.joystick.getThrottle(), Robot.joystick.getTurn()));
+                    driveArcadeShitty(
+                            tmp.set(Robot.joystick.getThrottle(), Robot.joystick.getTurn()));
                 }
 
                 public void end(boolean i) {
