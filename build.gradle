@@ -4,7 +4,7 @@ plugins {
     id "com.diffplug.gradle.spotless" version "3.27.1" apply false
 }
 
-apply from: file("formatting.gradle") // toggle me lol
+//apply from: file("formatting.gradle") // toggle me lol
 
 sourceCompatibility = JavaVersion.VERSION_11
 targetCompatibility = JavaVersion.VERSION_11
