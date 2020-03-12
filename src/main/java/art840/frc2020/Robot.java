@@ -110,11 +110,22 @@ public class Robot extends RobotBase {
 
         intake.arm.armOut().schedule();
 
-        boolean doAuto = true;
+        // AUTO CONFIG
+
+        boolean doAuto = true; // set to false to disable completely
+        double time = 2.0; // seconds to drive at
+        double speed = 1.0; // speed to drive forward at, from -1.0 to 1.0
 
         if (doAuto) {
-            (new RunEndCommand(() -> drivetrain.teleop.driveArcadeShitty(new Tuple(1.0, 0.0)),
-                    drivetrain.controller::driveZero, drivetrain)).withTimeout(2).schedule();
+            var fwdTuple = new Tuple(speed, 0);
+
+            var driveCmd = new RunEndCommand(() -> drivetrain.teleop.driveArcadeShitty(fwdTuple),
+                    drivetrain);
+            var stopCmd = new RunEndCommand(() -> drivetrain.teleop.driveArcadeShitty(Tuple.zero),
+                    drivetrain.controller::driveZero, drivetrain);
+
+            var finalCmd = driveCmd.withTimeout(time).andThen(stopCmd.withTimeout(2));
+            finalCmd.schedule();
         }
 
         // (c.getSelected()).schedule();
