@@ -49,7 +49,7 @@ public class CVRMap extends Map {
                 leftMotor = 7;
                 rightMotor = 6;
 
-                invertRight = true;
+                invertRight = false;
                 motorType = MotorType.kBrushless;
 
                 voltsFull = 2;
