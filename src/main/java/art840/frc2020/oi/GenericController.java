@@ -4,7 +4,7 @@ import art840.frc2020.Robot;
 import art840.frc2020.subsystems.other.Climb.Position;
 import art840.frc2020.util.commands.RunEndCommand;
 import art840.frc2020.util.math.ScalingUtils;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 
 public class GenericController extends Joystick {
     // XBox controller, F310 controller, etc
@@ -83,8 +83,9 @@ public class GenericController extends Joystick {
         getButton(Button.A).toggleWhenActive(Robot.intake.rollers.setOnCommand());
 
         // If button X is pressed while button B is activated, it should cancel everything button B
+        // Todo: add logging to Server for remote debug
 
-        getButton(Button.B).toggleWhenActive(new ParallelCommandGroup(
+        getButton(Button.B).toggleWhenActive(new ParallelRaceGroup(
                 new RunEndCommand(Robot.hopper.funnel::setFwd, Robot.hopper.funnel::setOff,
                         Robot.hopper.funnel),
                 new RunEndCommand(Robot.hopper.tower::setFwd, Robot.hopper.tower::stop,
